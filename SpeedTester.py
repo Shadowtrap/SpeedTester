@@ -10,7 +10,7 @@ uploadResults = []
 #Files needed for automation and adblocker
 rootDir = os.path.dirname(os.path.abspath(__file__))
 chromeDriver = rootDir + r"\chromedriver.exe"
-ublock = rootDir + r'\1.26.0_0'
+ublock = rootDir + r'\ublock-ver1.26.0_0'
 
 #Variables for convenience
 testIsInProgress = True
