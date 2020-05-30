@@ -1,5 +1,4 @@
-import time
-import os
+import time, os, platform
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -9,7 +8,7 @@ uploadResults = []
 
 #Files needed for automation and adblocker
 rootDir = os.path.dirname(os.path.abspath(__file__))
-chromeDriver = rootDir + r"\chromedriver.exe"
+chromeDriver = rootDir + r"\ChromeDrivers"
 ublock = rootDir + r'\ublock-ver1.26.0_0'
 
 #Variables for convenience
@@ -22,8 +21,20 @@ testsFailed = 0
 startTime = None
 endTime = None
 
+#Setting up Chrome Driver using OS
+def settingChromeDriver():
+    global chromeDriver
+    osType = platform.system()
+    if osType == "Windows":
+        chromeDriver = chromeDriver + r"\chromedriver_win.exe"
+    elif osType == "Linux":
+        chromeDriver = chromeDriver + r"\chromedriver_linux"
+    elif osType == "macOS":
+        chromeDriver = chromeDriver + r"\chromedriver_mac"
+
 #Setting up the broswer
 try:
+    settingChromeDriver()
     print("Opening Chrome....")
     startTime = time.time()
     chrome_options = Options()
@@ -35,8 +46,6 @@ try:
     print("Chrome Opened!")
 except:
     print("Chrome could not open.")
-
-
 
 #Starts the speed test
 def startTest():
