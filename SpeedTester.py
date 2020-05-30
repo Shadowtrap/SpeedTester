@@ -7,7 +7,7 @@ downloadResults = []
 uploadResults = []
 
 #Variables for convenience
-numberOfTrials = int(input("How many speed tests do you wish to do? "))
+numberOfTrials = None
 rootDir = os.path.dirname(os.path.abspath(__file__))
 chromeDriver = None
 ublock = None
@@ -19,6 +19,22 @@ testsSuccessful = 0
 testsFailed = 0
 startTime = None
 endTime = None
+
+#Setting Number of Trials to Run
+def settingNumberofTrials():
+    global numberOfTrials
+    try:
+        numberOfTrials = (input("How many speed tests do you wish to do? "))
+        if numberOfTrials < 0:
+            print("Incorrect Input......PLease Try Again or Type 0 to Quit Execution")
+            time.sleep(2)
+            settingNumberofTrials()
+        elif numberOfTrials == 0:
+            os._exit(1)
+    except:
+        print("Incorrect Input......PLease Try Again or Type 0 to Quit Execution")
+        time.sleep(2)
+        settingNumberofTrials()
 
 #Setting up Chrome Driver using OS
 def settingChromeDriver():
@@ -35,9 +51,9 @@ def settingChromeDriver():
         ublock = rootDir + r'/ublock-ver1.26.0_0'
 
 
-
 #Setting up the broswer
 try:
+    settingNumberofTrials()
     settingChromeDriver()
     print("Opening Chrome....")
     startTime = time.time()
@@ -111,7 +127,7 @@ def average(array):
 
 #Iterate through speed tests (n) times
 def redoTest():
-    global trialCount
+    global trialCount, numberOfTrials
     for i in range(numberOfTrials):
         trialCount = i + 1
         time.sleep(waitTime)

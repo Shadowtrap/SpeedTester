@@ -8,4 +8,10 @@ Installation of the Selenium Python Package is necessary for this to work which 
             
 Works with Google Chrome version 83 or higher.
 
-NOTE: Untested with MacOS and Linux
+Supported Operating Systems:
+    
+    Windows 32-bit and 64-bit
+    MacOS 64-bit
+    Linux 64-bit
+
+<h5>NOTE: Untested with MacOS and Linux and no support for ARM processors yet</h5>
