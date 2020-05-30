@@ -6,16 +6,15 @@ from selenium.webdriver.chrome.options import Options
 downloadResults = []
 uploadResults = []
 
-#Files needed for automation and adblocker
-rootDir = os.path.dirname(os.path.abspath(__file__))
-chromeDriver = rootDir + r"\ChromeDrivers"
-ublock = rootDir + r'\ublock-ver1.26.0_0'
-
 #Variables for convenience
+numberOfTrials = int(input("How many speed tests do you wish to do? "))
+rootDir = os.path.dirname(os.path.abspath(__file__))
+chromeDriver = None
+ublock = None
 testIsInProgress = True
 started = False
-numberOfTrials = int(input("How many speed tests do you wish to do? "))
 trialCount = None
+waitTime = 2
 testsSuccessful = 0
 testsFailed = 0
 startTime = None
@@ -23,14 +22,19 @@ endTime = None
 
 #Setting up Chrome Driver using OS
 def settingChromeDriver():
-    global chromeDriver
+    global chromeDriver, ublock
     osType = platform.system()
     if osType == "Windows":
-        chromeDriver = chromeDriver + r"\chromedriver_win.exe"
+        chromeDriver = rootDir + r"\ChromeDrivers\chromedriver_win.exe"
+        ublock = rootDir + r'\ublock-ver1.26.0_0'
     elif osType == "Linux":
-        chromeDriver = chromeDriver + r"\chromedriver_linux"
+        chromeDriver = rootDir + r"/ChromeDrivers/chromedriver_linux"
+        ublock = rootDir + r'/ublock-ver1.26.0_0'
     elif osType == "macOS":
-        chromeDriver = chromeDriver + r"\chromedriver_mac"
+        chromeDriver = rootDir + r"/ChromeDrivers/chromedriver_mac"
+        ublock = rootDir + r'/ublock-ver1.26.0_0'
+
+
 
 #Setting up the broswer
 try:
@@ -100,18 +104,21 @@ def average(array):
     sum = 0
     for i in array:
         sum += i
-    return sum/len(array)
+    try:
+        return sum/len(array)
+    except:
+        print("Error!")
 
 #Iterate through speed tests (n) times
 def redoTest():
     global trialCount
     for i in range(numberOfTrials):
         trialCount = i + 1
-        time.sleep(2)
+        time.sleep(waitTime)
         startTest()
-        time.sleep(2)
+        time.sleep(waitTime)
         testInProgress()
-        time.sleep(2)
+        time.sleep(waitTime)
         addResult()
 
 
