@@ -15,23 +15,20 @@
 ! strict blocking, yet the site will render properly if a user still decide to
 ! go ahead.
 
-! 2014-10-22: http://assiste.com/01Net.html
-! 2013-03-25: http://www.malekal.com/2011/07/09/pctutotuto4pc-association-avec-01net/
-! 2012-10-31: http://www.journaldunet.com/solutions/dsi/des-malwares-sur-telecharger-com-01net-1012.shtml
-! 2012-10-30: http://www.lesnumeriques.com/appli-logiciel/telecharger-depuis-01net-nuit-gravement-a-sante-pc-n26763.html
-! 2012-06-17: http://www.malekal.com/2012/06/17/01net-pc-optimizer-pour-ne-pas-optimiser-son-pc/
-! 2012-02-17: http://neosting.net/logiciels/01net-et-softonic-ajoutent-aussi-un-installeur-publicitaire.html
+! 2014-10-22: https://assiste.com/01Net.html
+! 2013-03-25: https://www.malekal.com/pctutotuto4pc-association-avec-01net/
+! 2012-10-31: https://www.journaldunet.com/solutions/dsi/des-malwares-sur-telecharger-com-01net-1012.shtml
+! 2012-10-30: https://www.lesnumeriques.com/appli-logiciel/telecharger-depuis-01net-nuit-gravement-a-sante-pc-n26763.html
+! 2012-06-17: https://www.malekal.com/01net-pc-optimizer-pour-ne-pas-optimiser-son-pc/
+! 2012-02-17: http://neosting.net/logiciels/01net-et-softonic-ajoutent-aussi-un-installeur-publicitaire.html (Dead page)
 ||01net.com/telecharger/$document
 
-! https://github.com/uBlockOrigin/uAssets/issues/6587
-||chip.de/n_downloader/*$document
-
-! 2015-03-11: http://blog.emsisoft.com/2015/03/11/mind-the-pup-top-download-portals-to-avoid/
-! 2015-01-21: http://www.howtogeek.com/207692/yes-every-freeware-download-site-is-serving-crapware-heres-the-proof/
-! 2015-01-11: http://www.howtogeek.com/198622/heres-what-happens-when-you-install-the-top-10-download.com-apps/
-! 2012-06-27: http://insecure.org/news/download-com-fiasco.html
-! 2011-12-05: http://seclists.org/nmap-announce/2011/5
-! 2011-08-22: http://www.extremetech.com/computing/93504-download-com-wraps-downloads-in-bloatware-lies-about-motivations
+! 2015-03-11: https://blog.emsisoft.com/en/12678/mind-the-pup-top-download-portals-to-avoid/
+! 2015-01-21: https://www.howtogeek.com/207692/yes-every-freeware-download-site-is-serving-crapware-heres-the-proof/
+! 2015-01-11: https://www.howtogeek.com/198622/heres-what-happens-when-you-install-the-top-10-download.com-apps/
+! 2012-06-27: https://insecure.org/news/download-com-fiasco.html
+! 2011-12-05: https://seclists.org/nmap-announce/2011/5
+! 2011-08-22: https://www.extremetech.com/computing/93504-download-com-wraps-downloads-in-bloatware-lies-about-motivations
 ! https://github.com/uBlockOrigin/uAssets/issues/926
 ! ||download.cnet.com^$document
 
@@ -40,7 +37,7 @@
 ! 2013-12-10: https://blog.whitehatsec.com/why-com-com-should-scare-you/
 ||com.com^$document
 
-! 2015-06-18: http://www.information-age.com/industry/software/123459675/hotbed-malware-another-blow-sourceforge-google-discovers-588-pages-malicious-software
+! 2015-06-18: https://www.information-age.com/hotbed-malware-another-blow-sourceforge-google-discovers-588-pages-malicious-software-123459675/
 ! 2015-06-02: https://blog.l0cal.com/2015/06/02/what-happened-to-sourceforge/
 ! 2015-05-28: http://libregraphicsworld.org/blog/entry/anatomy-of-sourceforge-gimp-controversy
 ! 2015-05-17: http://lifehacker.com/antiadware-gets-rid-of-bundled-crapware-on-popular-down-1702818594
@@ -62,10 +59,6 @@
 ||flexytalk.net^
 ||quickdomainfwd.com^
 
-! https://blog.malwarebytes.com/cybercrime/2017/05/roughted-the-anti-ad-blocker-malvertiser/
-||roughted.com^
-||roughted.com^$inline-script
-
 ! https://github.com/uBlockOrigin/uAssets/issues/1547
 ||vlc.de^$document
 
@@ -74,12 +67,6 @@
 
 ! https://github.com/uBlockOrigin/uAssets/issues/1853
 ||havenworks.com^$document
-
-! https://github.com/uBlockOrigin/uAssets/issues/1943
-||securetoolext.com^$document
-
-! https://github.com/HandyUserscripts/AntiAdware/issues/52
-upload4earn.org##+js(remove-attr.js, checked)
 
 ! https://github.com/gorhill/uBlock/wiki/Badware-risks#ublockorg
 ||ublock.org^$document
@@ -92,7 +79,6 @@ upload4earn.org##+js(remove-attr.js, checked)
 ||7zip.fr^$document
 ||7zip.it^$document
 ||adblock.fr^$document
-||appdownloads.co^$document
 ||aresgalaxy.es^$document
 ||audacity.es^$document
 ||audacity.fr^$document
@@ -181,22 +167,16 @@ upload4earn.org##+js(remove-attr.js, checked)
 ||governiamo.com^$document
 
 ! https://github.com/uBlockOrigin/uAssets/issues/4201
-||whatsaappp.com^$document
 ||check-now.net^$document
 ||googlo.co^$document
 ||yahoo-news.co^$document
 ! https://github.com/uBlockOrigin/uAssets/issues/4201#issuecomment-458340273
 ||5qg9ibt1a6.com^$document
-||atreus.hexenschmiede.info^$document
-||axxmtjambo.xyz^$document
 ||browsergames2018.com^$document
 ||chairgaubsy.com^$document
 ||epailseptox.com^$document
 ||hentaiplaytime.com^$document
-||jobhelpr.com^$document
 ||lameterthenhep.info^$document
-||lavfd.net^$document
-||microsoft.com-repair-windows.live^$document
 ||notification-time.com^$document
 ||o4uxrk33.com^$document
 ||viewmypdf.com^$document
@@ -256,27 +236,19 @@ majorgeeks.com##b:has(a[target^="reimage"])
 2-spyware.com,novirus.uk,faravirus.ro,uirusu.jp,virusi.hr,wubingdu.cn,avirus.hu,ioys.gr,odstranitvirus.cz,tanpavirus.web.id,utanvirus.se,virukset.fi,losvirus.es,virusler.info.tr,semvirus.pt,lesvirus.fr,senzavirus.it,dieviren.de,viruset.no,usunwirusa.pl,zondervirus.nl,bedynet.ru,virusai.lt,virusi.bg,viirused.ee,udenvirus.dk##a:has-text(Reimage)
 2-spyware.com,novirus.uk,faravirus.ro,uirusu.jp,virusi.hr,wubingdu.cn,avirus.hu,ioys.gr,odstranitvirus.cz,tanpavirus.web.id,utanvirus.se,virukset.fi,losvirus.es,virusler.info.tr,semvirus.pt,lesvirus.fr,senzavirus.it,dieviren.de,viruset.no,usunwirusa.pl,zondervirus.nl,bedynet.ru,virusai.lt,virusi.bg,viirused.ee,udenvirus.dk##.quick-download-button-text
 ! https://windowsloop.com/network-adapters-shortcut/
-windowsloop.com##.wl-prakatana
 ||reimageplus.com^$doc
-
-! https://github.com/uBlockOrigin/uAssets/issues/5187
-||check-prizes-now2.life^$document
 
 ! Lapsed domains that once hosted adblock lists, several of whom are now used for bad purposes
 ! https://github.com/uBlockOrigin/uAssets/issues/5307
 ||gjtech.net^$document
-||spam404bl.com^$document
 ||securemecca.com^$document
-||hufilter.hu^$document
 ||fredfiber.no^$document
 ! https://github.com/uBlockOrigin/uAssets/pull/6757
 ||1hos.cf^$document
-||1hosts.cf^$document
 
 ! Badware
 ||kuhoot.it^$document
 ||getawesome6.com^$document
-||forwrdnow.com^$document
 ||findthebestoffer.com^$document
 ||rołex.com^$document
 ||get.mysecurify.com^$document
@@ -291,14 +263,8 @@ windowsloop.com##.wl-prakatana
 ! https://github.com/uBlockOrigin/uAssets/issues/5305#issuecomment-484754393
 ! https://github.com/uBlockOrigin/uAssets/issues/5489#issuecomment-488207423
 ||36512300.com^
-||bks-11.com^
-||doggroomingbycaitlin.com^
 ||gmboxx.com^
-||kalidub.website^
 ||mr.media-bucket.com^
-
-! https://github.com/uBlockOrigin/uAssets/issues/5386
-||okom.wroc.pl^
 
 ! https://github.com/NanoMeow/QuickReports/issues/965#issuecomment-485274387
 ||pl.allsports4free.club^
@@ -307,7 +273,6 @@ windowsloop.com##.wl-prakatana
 ! https://github.com/uBlockOrigin/uAssets/issues/5409
 ||discount.s3blog.org^
 ||s3blog.org^$3p
-||crvtck.com^
 ||dataprovider.biz^
 
 ! https://github.com/uBlockOrigin/uAssets/issues/5442
@@ -315,9 +280,6 @@ windowsloop.com##.wl-prakatana
 
 ! https://github.com/uBlockOrigin/uAssets/issues/4862#issuecomment-486941006
 ||upload4earn.org^$document
-
-! https://www.reddit.com/r/uBlockOrigin/comments/bmnjfg/found_a_pretty_nasty_malware_site_had_to_kill/
-||internet-security-73bd67kl.tk^$document
 
 ! Look-alike domain for keepassxc.org, redirects to spam/malware domains
 ||keepassxc.com^$document
@@ -327,7 +289,7 @@ windowsloop.com##.wl-prakatana
 ||ay8ou8ohth.com^$document
 
 ! https://github.com/uBlockOrigin/uAssets/issues/5638
-1tvv.ru,2012-drakon.ru,2012-god.ru,2015-god-kozy.ru,alterprogs.ru,bike-pro.ru,bilsh.com,careers.ua,daily-news.com.ua,darksound.ru,dengiua.com,diplom4rabota.ru,dynamo-kiev.com,electronika.spb.ru,faxnews.ru,fond-sovest.ru,fotochki.com,gamesnice.ru,glashataj.info,god-zmei.ru,godkota.ru,godkozy.ru,gogofiles.net,gorod-zlatoust.ru,great-income.ru,gsm-csb.ru,guitar-love.ru,healthystyle.info,huaweiclub.ru,i-no.ru,igeek.ru,intell.in.ua,jampo.com.ua,jusonline.ru,kaspianchoob.com,livegif.ru,lock-omsk.ru,marafonec.com,maxigame.su,mcomp.org,mediahouse.com.ua,miptic.ru,mir-kliparta.ru,mobile-novinki.ru,myimperia.ru,nakapote.com,nb-yanao.ru,neodrive.ru,nepoleno.ru,newsdnya.ru,newsinmir.com,nokia-lifestyle.ru,novoden.ru,obzh.ru,onegadget.ru,orbita-lviv.com,pingola.ru,pokemongo-go.ru,pravpost.org.ua,rao-ees.ru,ratnet.od.ua,remontidekor.ru,softgaz.ru,sosedi2015.ru,spletnius.ru,stuffed.ru,submarine.od.ua,sup-idea.com,supreme2.ru,tic.com.ua,tipslife.ru,topicnews.net,turmouse.ru,uralmtk.ru,usetrans.com,v2013.ru,vhoru.com.ua,vkulake.com,vnebi.com,vremechko.org,vremyamn.ru,webrecepty.info,amurutro.ru,ap7.ru,gadgetblog.ru,globalomsk.ru,obzh.ru,yuriblog.ru,zakryma.ru,zamanula.ru,zheltaya.ru##+js(abort-on-property-read.js, document.getElementById)
+1tvv.ru,2012-drakon.ru,2012-god.ru,2015-god-kozy.ru,alterprogs.ru,bike-pro.ru,bilsh.com,careers.ua,daily-news.com.ua,darksound.ru,dengiua.com,diplom4rabota.ru,dynamo-kiev.com,electronika.spb.ru,faxnews.ru,fond-sovest.ru,fotochki.com,gamesnice.ru,glashataj.info,god-zmei.ru,godkota.ru,godkozy.ru,gogofiles.net,gorod-zlatoust.ru,great-income.ru,gsm-csb.ru,guitar-love.ru,healthystyle.info,huaweiclub.ru,i-no.ru,igeek.ru,intell.in.ua,jampo.com.ua,jusonline.ru,kaspianchoob.com,livegif.ru,lock-omsk.ru,marafonec.com,maxigame.su,mcomp.org,mediahouse.com.ua,miptic.ru,mir-kliparta.ru,mobile-novinki.ru,myimperia.ru,nakapote.com,nb-yanao.ru,neodrive.ru,nepoleno.ru,newsdnya.ru,newsinmir.com,nokia-lifestyle.ru,novoden.ru,obzh.ru,onegadget.ru,orbita-lviv.com,pingola.ru,pokemongo-go.ru,pravpost.org.ua,rao-ees.ru,ratnet.od.ua,remontidekor.ru,softgaz.ru,sosedi2015.ru,spletnius.ru,stuffed.ru,submarine.od.ua,sup-idea.com,supreme2.ru,tic.com.ua,tipslife.ru,topicnews.net,turmouse.ru,uralmtk.ru,usetrans.com,v2013.ru,vhoru.com.ua,vkulake.com,vnebi.com,vremechko.org,vremyamn.ru,webrecepty.info,amurutro.ru,ap7.ru,gadgetblog.ru,globalomsk.ru,obzh.ru,yuriblog.ru,zakryma.ru,zamanula.ru,zheltaya.ru##+js(aopr, document.getElementById)
 
 ! https://github.com/uBlockOrigin/uAssets/issues/5805
 ||newsfile.club^$document
@@ -336,16 +298,6 @@ windowsloop.com##.wl-prakatana
 
 ! https://github.com/uBlockOrigin/uAssets/issues/5854
 ||ublockerext.com^
-
-! Badware
-||undings.biz^$document
-
-! https://github.com/uBlockOrigin/uAssets/issues/5923
-gamemod.pro,taigameandroid.asia##[href*="//appandroider.com"]
-||appandroider.com^
-
-! https://github.com/uBlockOrigin/uAssets/issues/6097
-||gamekeys.gq^$all
 
 ! https://forums.lanik.us/viewtopic.php?f=62&p=149407#p149406
 ||buzzadnetwork.com^$all
@@ -357,12 +309,9 @@ gamemod.pro,taigameandroid.asia##[href*="//appandroider.com"]
 ||videoplayerscript.club^$all
 
 ! https://github.com/uBlockOrigin/uAssets/issues/6298
-||check-prize-here3.life^
 ||visitingargentina.us^
 
 ! https://github.com/uBlockOrigin/uAssets/issues/6342
-||circlerabbits.info^
-||recessmask.pw^
 ||redsittalvetoft.pro^
 
 ! https://github.com/uBlockOrigin/uAssets/issues/6381
@@ -378,7 +327,6 @@ gamemod.pro,taigameandroid.asia##[href*="//appandroider.com"]
 ||rilenews.com^
 ||thecontroversialfiles.net^
 ||voxtribune.com^
-||google-en.promotionaldivices.icu^
 
 ! https://blog.sucuri.net/2018/08/massive-wordpress-redirect-campaign-targets-vulnerable-tagdiv-themes-and-ultimate-member-plugins.html
 ||checkisreal.com^
@@ -403,7 +351,6 @@ gamemod.pro,taigameandroid.asia##[href*="//appandroider.com"]
 
 ! redirect from egy best
 ||stremanp.com^$all
-||greatdexchange.com^$all
 
 ! redirects
 ||nextyourcontent.com^$all
@@ -417,8 +364,6 @@ gamemod.pro,taigameandroid.asia##[href*="//appandroider.com"]
 ||giftdomain.site^$all
 ||best2019-games-web4.com^$all
 ||install.convertmyvid.com^$all
-||nonamereverse98.live^$all
-||nonamereverse39.live^$all
 ||check-best-prizes-here.*^$all
 ||track-enable.com^$all
 ||searchdimension.com^$all
@@ -485,5 +430,232 @@ thepiratebay3.com^$all
 ! https://github.com/NanoMeow/QuickReports/issues/3299
 ! https://github.com/NanoMeow/QuickReports/issues/3300
 ||smsiak.pl^$document
-||smsiak.eu^$document
 ||smsy24.pl^$document
+
+! redirecting domains / fraud
+||programma-di-fidelizzazione.top^$all
+||prizesworldcenter.com^$all
+||rootsingput9.live^$all
+||rootsingput3.live^$all
+||ideaanstudy1.live^$all
+||ideaanstudy2.live^$all
+||ideaanstudy3.live^$all
+||ideaanstudy4.live^$all
+||ideaanstudy5.live^$all
+||ideaanstudy6.live^$all
+||ideaanstudy7.live^$all
+||ideaanstudy8.live^$all
+||ideaanstudy9.live^$all
+||ideaanstudy11.live^$all
+||ideaanstudy12.live^$all
+||ideaanstudy13.live^$all
+||ideaanstudy14.live^$all
+||ideaanstudy15.live^$all
+||video-adblock.com^$all
+||vid-adblocker.com^$all
+||multiadblock.com^$all
+||global-survey-online.com^$all
+||popsads.link^$all
+||rsafrwd.com^$all
+||adverdirect.com^$all
+||followclick.pro^$all
+||euphe-gun.com^$all
+||survey-tracking-69.com^$all
+||shoppingsurveysonline.com^$all
+||ordinaryluckrewardextra.club^$all
+||weekly-lucky-2020-gift.club^$all
+/?btd=*token$all
+||laidauni.com^$all
+||bestwinexperience.com^$all
+||triumphantplace.com^$all
+||traffic-go.com^$all
+||syncwowsails.com^$all
+||wignewsee.club^$all
+||bainushe.com^$all
+||streamssitesearch.com^$all
+||trackertrak.com^$all
+||acceder.gratis^$all
+||catbeardx.com^$all
+||newsinform.net^$all
+||pshtr.xyz^$all
+||ssionsupre.fun^$all
+||vfgrse.com^$all
+||wdeliv.net^$all
+&td=redirect4u.com$all
+||37.1.209.213^$all
+||bestprizeday.life^$all
+||watch-video.net^$all
+||findmedia.biz^$all
+||polimer.xyz^$all
+||bingstyle.com^$all
+||zctrack.com^$all
+||macotuqa.xyz^$all
+||redirekted.com^$all
+||1ownandfresh1.com^$all
+||get19dragos.club^$all
+||best-prizes-house.life^$all
+||ptookaih.net^$all
+||loaduber-theprogressivefile.best^$all
+||blockskipad.com^$all
+||adpopblocker.com^$all
+||newsurprizeforyou.com^$all
+||oldharper.xyz^$all
+||teenyreligious.com^$all
+||goto2021.top^$all
+||track.countlessclicks.com^$all
+||redirectsstm.click^$all
+||horried.pro^$all
+||psixoglika.pro^$all
+||investing-fund.com^$all
+||protected-clicker.com^$all
+||investing-bank.com^$all
+||invest-digest.com^$all
+||finance.business-empire.com-articles.comm-news.com^$all
+||personal-safety-update.com^$all
+||premiumbros.com^$all
+||turibius-hra.com^$all
+||trafficjunction.com^$all
+||arclk.net^$all
+||clkepd.com^$all
+||btnativenav.com^$all
+||1111sale.us^$all
+||getoiu.com^$all
+||cyneheard-fau.com^$all
+||litance-viestside.icu^$all
+||omgtnc.com^$all
+||bector-blotance.xyz^$all
+||firmis-min.com^$all
+||cd-dvd-brennen.de^$all
+||news-central.org^
+||revercecaptcha.com^$all
+||get-instant-prize.life^$all
+||acc.pp.ua^$all
+||bestoffer21.info^$all
+||express-news.me^$all
+||n01.biz^$all
+||n06.biz^$all
+||storage-for-mobileapps.life^$all
+||tourism-services.online^$all
+||um-bredirect.com^$all
+
+||Profitto.org^$all
+||web.aicrypto.live^$all
+||hyperwage.com^$all
+||newsglobal.live^
+||ricavato.com^
+||bitcoingenerator.me^$all
+||bqyvip.cn^$all
+||rom.xprofile.icu^$all
+||privatewinners.com^$all
+! fraud => https://forums.lanik.us/viewtopic.php?f=90&t=45586
+||raidrush.info^$all
+||descargarjuegospc.net^
+||411medias.com^$all
+||zedplays.com^$all
+||japan1-06.xyz^$all
+||cpa-optimizer.online^$all
+||special-update.online^$all
+||success-news.net^$all
+||downloads2020.com^$all
+||aloha-news.net^$all
+||stay-notified.live^$all
+ 
+! https://github.com/NanoMeow/QuickReports/issues/4581
+||installnow.xyz^
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/68588
+! https://github.com/uBlockOrigin/uAssets/issues/8869
+/^https:\/\/[a-z]{7,}\.li[fv]e\/[a-z]{8}\/\?/$doc,popup,domain=life|live
+/^https?:\/\/[-0-9a-z]*prize[-0-9a-z]+\.li[fv]e\/\?u=[0-9a-z]+&o=[0-9a-z]+/$doc,domain=life|live
+/^https?:\/\/[-0-9a-z]*prize[-0-9a-z]+\.li[fv]e\/\?u=[0-9a-z]+&o=[0-9a-z]+/$popup,domain=www.google.*
+
+! https://github.com/uBlockOrigin/uAssets/issues/8378
+||0addon.com^
+||ogtrk.net^
+||gameglitcher.com^
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/70414
+||app-department.report^$all
+
+! https://www.joesandbox.com/analysis/300638/0/html
+||antivirus-protection.me^$all
+
+! browser-jack
+||kr-106.xyz^$all
+
+! https://www.hybrid-analysis.com/sample/3ad8f4dc6a021e82d25247c266d89d20d981f7187413405f0b2e35d984bd60cb
+||secureconv-dl.com^$all
+
+! https://github.com/uBlockOrigin/uAssets/issues/8466
+||91.241.60.117^$all
+||91.241.60.119^$all
+
+! https://github.com/uBlockOrigin/uAssets/issues/8530
+||devharry.cc^
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/74996
+||directhourshoulders-1.life^$doc,popup
+
+! https://github.com/uBlockOrigin/uAssets/issues/8630
+||mediazlez.pp.ua^$all
+||newfind.cloudns.cl^$all
+||puzzceworkdistkebur.tk^$all
+||recangedesna.ml^$all
+||sevenonex.space^$all
+||suzamense.com^$all
+||walhalagame.fun^$doc
+! https://github.com/uBlockOrigin/uAssets/issues/8630#issuecomment-803722231
+||app-inject.com^$doc
+||fortniteswapper.fun^$doc
+||zhirhacks.pro^
+! https://github.com/uBlockOrigin/uAssets/issues/8630#issuecomment-809115828
+||supra.dns-cloud.net^$doc
+! https://github.com/uBlockOrigin/uAssets/issues/8630#issuecomment-810957825
+||tophacks.pro^$doc
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/69036
+.systems/signup?ad_domain=$doc,popup
+
+! https://github.com/uBlockOrigin/uAssets/issues/8792
+||domainregistrar.ga^$document
+||servicedomains.ga^$document
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/78614
+/^https?:\/\/\d{6}\.xyz\/lucky\/[-a-z]+\/\?t=/$doc,popup,domain=xyz
+/^https?:\/\/[a-z]{6}\.vip\/lucky\/[-a-z]+\/\?t=/$doc,popup,domain=vip
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/80251
+||shared-lvps08.com^$doc
+
+! https://github.com/uBlockOrigin/uAssets/issues/8953
+||facepunchskin.com^$doc
+
+! fake software updaters /redirections
+||3black.info^ 
+||acrisialithic.cam^
+||alfaiztech.com^
+||amanda.ttnrd.com^
+||android-security-upd.com^ 
+||atnpx.com^
+||best-prizehouse15.info^
+||boot-upcompletely-bestspeedyfile.best^
+||free-download.lcomicuzik6s.top^
+||herdcowhas.icu^
+||home-prize-winner-ma3d.live^
+||load17.biz^
+||mfroute.com^
+||miserve-chanics.com^
+||ournewsafte.biz
+||ponk.pro^
+||protocolgroupgroups.com^
+||sadbutchi.work^
+||samplerpouch.com^
+||stuiop.com^
+||survey2you.bid^
+||track-149uew.link^
+||tratbc.com^
+||update-phone-today.com^
+||watchprecise-bestextremelyfile.best^
+||workerz1.com^
+||your-bonus.ecl8hr4lalq5.top^
+||zvideo-live.com^

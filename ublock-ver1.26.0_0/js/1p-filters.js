@@ -29,19 +29,70 @@
 
 /******************************************************************************/
 
-const cmEditor = new CodeMirror(
-    document.getElementById('userFilters'),
-    {
-        autofocus: true,
-        lineNumbers: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-    }
-);
+const cmEditor = new CodeMirror(document.getElementById('userFilters'), {
+    autoCloseBrackets: true,
+    autofocus: true,
+    extraKeys: {
+        'Ctrl-Space': 'autocomplete',
+        'Tab': 'toggleComment',
+    },
+    foldGutter: true,
+    gutters: [ 'CodeMirror-linenumbers', 'CodeMirror-foldgutter' ],
+    lineNumbers: true,
+    lineWrapping: true,
+    matchBrackets: true,
+    maxScanLines: 1,
+    styleActiveLine: {
+        nonEmpty: true,
+    },
+});
 
 uBlockDashboard.patchCodeMirrorEditor(cmEditor);
 
 let cachedUserFilters = '';
+
+/******************************************************************************/
+
+// Add auto-complete ability to the editor.
+
+{
+    let hintUpdateToken = 0;
+
+    const responseHandler = function(response) {
+        if ( response instanceof Object === false ) { return; }
+        if ( response.hintUpdateToken !== undefined ) {
+            const mode = cmEditor.getMode();
+            if ( mode.setHints instanceof Function ) {
+                mode.setHints(response);
+            }
+            if ( hintUpdateToken === 0 ) {
+                mode.parser.expertMode = response.expertMode !== false;
+            }
+            hintUpdateToken = response.hintUpdateToken;
+        }
+        vAPI.setTimeout(getHints, 2503);
+    };
+
+    const getHints = function() {
+        vAPI.messaging.send('dashboard', {
+            what: 'getAutoCompleteDetails',
+            hintUpdateToken
+        }).then(responseHandler);
+    };
+
+    getHints();
+}
+
+/******************************************************************************/
+
+const getEditorText = function() {
+    const text = cmEditor.getValue().replace(/\s+$/, '');
+    return text === '' ? text : text + '\n';
+};
+
+const setEditorText = function(text) {
+    cmEditor.setValue(text.replace(/\s+$/, '') + '\n\n');
+};
 
 /******************************************************************************/
 
@@ -65,10 +116,7 @@ const renderUserFilters = async function() {
 
     let content = details.content.trim();
     cachedUserFilters = content;
-    if ( content.length !== 0 ) {
-        content += '\n';
-    }
-    cmEditor.setValue(content);
+    setEditorText(content);
 
     userFiltersChanged(false);
 };
@@ -99,13 +147,10 @@ const handleImportFilePicker = function() {
 
     const fileReaderOnLoadHandler = function() {
         let content = abpImporter(this.result);
-        content = uBlockDashboard.mergeNewLines(
-            cmEditor.getValue().trim(),
-            content
-        );
+        content = uBlockDashboard.mergeNewLines(getEditorText(), content);
         cmEditor.operation(( ) => {
             const cmPos = cmEditor.getCursor();
-            cmEditor.setValue(`${content}\n`);
+            setEditorText(content);
             cmEditor.setCursor(cmPos);
             cmEditor.focus();
         });
@@ -132,7 +177,7 @@ const startImportFilePicker = function() {
 /******************************************************************************/
 
 const exportUserFiltersToFile = function() {
-    const val = cmEditor.getValue().trim();
+    const val = getEditorText();
     if ( val === '' ) { return; }
     const filename = vAPI.i18n('1pExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
@@ -148,7 +193,7 @@ const exportUserFiltersToFile = function() {
 const applyChanges = async function() {
     const details = await vAPI.messaging.send('dashboard', {
         what: 'writeUserFilters',
-        content: cmEditor.getValue(),
+        content: getEditorText(),
     });
     if ( details instanceof Object === false || details.error ) { return; }
 
@@ -160,23 +205,19 @@ const applyChanges = async function() {
 };
 
 const revertChanges = function() {
-    let content = cachedUserFilters;
-    if ( content.length !== 0 ) {
-        content += '\n';
-    }
-    cmEditor.setValue(content);
+    setEditorText(cachedUserFilters);
 };
 
 /******************************************************************************/
 
 const getCloudData = function() {
-    return cmEditor.getValue();
+    return getEditorText();
 };
 
 const setCloudData = function(data, append) {
     if ( typeof data !== 'string' ) { return; }
     if ( append ) {
-        data = uBlockDashboard.mergeNewLines(cmEditor.getValue(), data);
+        data = uBlockDashboard.mergeNewLines(getEditorText(), data);
     }
     cmEditor.setValue(data);
 };
@@ -187,7 +228,7 @@ self.cloud.onPull = setCloudData;
 /******************************************************************************/
 
 self.hasUnsavedData = function() {
-    return cmEditor.getValue().trim() !== cachedUserFilters;
+    return getEditorText().trim() !== cachedUserFilters;
 };
 
 /******************************************************************************/
@@ -202,21 +243,29 @@ uDom('#userFiltersRevert').on('click', revertChanges);
 // https://github.com/gorhill/uBlock/issues/3706
 //   Save/restore cursor position
 //
-// CoreMirror reference: https://codemirror.net/doc/manual.html#api_selection
-renderUserFilters().then(( ) => {
-    cmEditor.clearHistory();
-    return vAPI.localStorage.getItemAsync('myFiltersCursorPosition');
-}).then(line => {
-    if ( typeof line === 'number' ) {
-        cmEditor.setCursor(line, 0);
-    }
-    cmEditor.on('cursorActivity', ( ) => {
-        const line = cmEditor.getCursor().line;
-        if ( vAPI.localStorage.getItem('myFiltersCursorPosition') !== line ) {
-            vAPI.localStorage.setItem('myFiltersCursorPosition', line);
+// CodeMirror reference: https://codemirror.net/doc/manual.html#api_selection
+{
+    let curline = 0;
+    let timer;
+
+    renderUserFilters().then(( ) => {
+        cmEditor.clearHistory();
+        return vAPI.localStorage.getItemAsync('myFiltersCursorPosition');
+    }).then(line => {
+        if ( typeof line === 'number' ) {
+            cmEditor.setCursor(line, 0);
         }
+        cmEditor.on('cursorActivity', ( ) => {
+            if ( timer !== undefined ) { return; }
+            if ( cmEditor.getCursor().line === curline ) { return; }
+            timer = vAPI.setTimeout(( ) => {
+                timer = undefined;
+                curline = cmEditor.getCursor().line;
+                vAPI.localStorage.setItem('myFiltersCursorPosition', curline);
+            }, 701);
+        });
     });
-});
+}
 
 cmEditor.on('changes', userFiltersChanged);
 CodeMirror.commands.save = applyChanges;

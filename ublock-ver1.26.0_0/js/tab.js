@@ -343,7 +343,7 @@
                 fctxt.setURL(targetURL)
                      .setTabId(openerTabId)
                      .setTabOriginFromURL(rootOpenerURL)
-                     .setDocOriginFromURL(localOpenerURL);
+                     .setDocOriginFromURL(localOpenerURL || rootOpenerURL);
             } else {
                 fctxt.setURL(rootOpenerURL)
                      .setTabId(targetTabId)
@@ -360,7 +360,7 @@
         // filtering pane.
         const pageStore = µb.pageStoreFromTabId(openerTabId);
         if ( pageStore ) {
-            pageStore.journalAddRequest(fctxt.getHostname(), result);
+            pageStore.journalAddRequest(fctxt, result);
             pageStore.popupBlockedCount += 1;
         }
 
@@ -371,10 +371,10 @@
 
         // It is a popup, block and remove the tab.
         if ( popupType === 'popup' ) {
-            µb.unbindTabFromPageStats(targetTabId);
+            µb.unbindTabFromPageStore(targetTabId);
             vAPI.tabs.remove(targetTabId, false);
         } else {
-            µb.unbindTabFromPageStats(openerTabId);
+            µb.unbindTabFromPageStore(openerTabId);
             vAPI.tabs.remove(openerTabId, true);
         }
 
@@ -513,6 +513,10 @@ housekeep itself.
         }
     };
 
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/1184
+    //   Do not consider a tab opened from `about:newtab` to be a popup
+    //   candidate.
+
     const onTabCreated = async function(createDetails) {
         const { sourceTabId, sourceFrameId, tabId } = createDetails;
         const popup = popupCandidates.get(tabId);
@@ -531,6 +535,13 @@ housekeep itself.
                 ]);
             }
             catch (reason) {
+                return;
+            }
+            if (
+                Array.isArray(openerDetails) === false ||
+                openerDetails.length !== 2 ||
+                openerDetails[1].url === 'about:newtab'
+            ) {
                 return;
             }
             popupCandidates.set(
@@ -577,26 +588,22 @@ housekeep itself.
         tabContexts.delete(this.tabId);
     };
 
-    TabContext.prototype.onTab = function(tab) {
-        if ( tab ) {
-            this.gcTimer = vAPI.setTimeout(( ) => this.onGC(), gcPeriod);
-        } else {
-            this.destroy();
-        }
-    };
-
     TabContext.prototype.onGC = async function() {
         if ( vAPI.isBehindTheSceneTabId(this.tabId) ) { return; }
         // https://github.com/gorhill/uBlock/issues/1713
-        // For unknown reasons, Firefox's setTimeout() will sometimes
-        // causes the callback function to be called immediately, bypassing
-        // the main event loop. For now this should prevent uBO from crashing
-        // as a result of the bad setTimeout() behavior.
+        //   For unknown reasons, Firefox's setTimeout() will sometimes
+        //   causes the callback function to be called immediately, bypassing
+        //   the main event loop. For now this should prevent uBO from
+        //   crashing as a result of the bad setTimeout() behavior.
         if ( this.onGCBarrier ) { return; }
         this.onGCBarrier = true;
         this.gcTimer = null;
         const tab = await vAPI.tabs.get(this.tabId);
-        this.onTab(tab);
+        if ( tab instanceof Object === false || tab.discarded === true ) {
+            this.destroy();
+        } else {
+            this.gcTimer = vAPI.setTimeout(( ) => this.onGC(), gcPeriod);
+        }
         this.onGCBarrier = false;
     };
 
@@ -843,7 +850,7 @@ vAPI.Tabs = class extends vAPI.Tabs {
     onClosed(tabId) {
         super.onClosed(tabId);
         if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
-        µBlock.unbindTabFromPageStats(tabId);
+        µBlock.unbindTabFromPageStore(tabId);
         µBlock.contextMenu.update();
     }
 
@@ -861,22 +868,30 @@ vAPI.Tabs = class extends vAPI.Tabs {
     // properly setup if network requests are fired from within the tab.
     // Example: Chromium + case #6 at
     //          http://raymondhill.net/ublock/popup.html
-
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/688#issuecomment-748179731
+    //   For non-network URIs, defer scriptlet injection to content script. The
+    //   reason for this is that we need the effective URL and this information
+    //   is not available at this point.
     onNavigation(details) {
         super.onNavigation(details);
         const µb = µBlock;
-        if ( details.frameId === 0 ) {
-            µb.tabContextManager.commit(details.tabId, details.url);
-            let pageStore = µb.bindTabToPageStats(details.tabId, 'tabCommitted');
-            if ( pageStore ) {
-                pageStore.journalAddRootFrame('committed', details.url);
+        const { frameId, tabId, url } = details;
+        if ( frameId === 0 ) {
+            µb.tabContextManager.commit(tabId, url);
+            const pageStore = µb.bindTabToPageStore(tabId, 'tabCommitted');
+            if ( pageStore !== null ) {
+                pageStore.journalAddRootFrame('committed', url);
             }
         }
-        if ( µb.canInjectScriptletsNow ) {
-            let pageStore = µb.pageStoreFromTabId(details.tabId);
-            if ( pageStore !== null && pageStore.getNetFilteringSwitch() ) {
-                µb.scriptletFilteringEngine.injectNow(details);
-            }
+        const pageStore = µb.pageStoreFromTabId(tabId);
+        if ( pageStore === null ) { return; }
+        pageStore.setFrameURL(details);
+        if (
+            µb.canInjectScriptletsNow &&
+            µb.URI.isNetworkURI(url) &&
+            pageStore.getNetFilteringSwitch()
+        ) {
+            µb.scriptletFilteringEngine.injectNow(details);
         }
     }
 
@@ -889,7 +904,7 @@ vAPI.Tabs = class extends vAPI.Tabs {
         if ( !tab.url || tab.url === '' ) { return; }
         if ( !changeInfo.url ) { return; }
         µBlock.tabContextManager.commit(tabId, changeInfo.url);
-        µBlock.bindTabToPageStats(tabId, 'tabUpdated');
+        µBlock.bindTabToPageStore(tabId, 'tabUpdated');
     }
 };
 
@@ -900,12 +915,12 @@ vAPI.tabs = new vAPI.Tabs();
 
 // Create an entry for the tab if it doesn't exist.
 
-µBlock.bindTabToPageStats = function(tabId, context) {
+µBlock.bindTabToPageStore = function(tabId, context) {
     this.updateToolbarIcon(tabId, 0b111);
 
     // Do not create a page store for URLs which are of no interests
     if ( this.tabContextManager.exists(tabId) === false ) {
-        this.unbindTabFromPageStats(tabId);
+        this.unbindTabFromPageStore(tabId);
         return null;
     }
 
@@ -947,8 +962,7 @@ vAPI.tabs = new vAPI.Tabs();
 
 /******************************************************************************/
 
-µBlock.unbindTabFromPageStats = function(tabId) {
-    //console.debug('µBlock> unbindTabFromPageStats(%d)', tabId);
+µBlock.unbindTabFromPageStore = function(tabId) {
     const pageStore = this.pageStores.get(tabId);
     if ( pageStore === undefined ) { return; }
     pageStore.dispose();
@@ -1024,14 +1038,15 @@ vAPI.tabs = new vAPI.Tabs();
         let badge = '';
         let color = '#666';
 
-        let pageStore = µb.pageStoreFromTabId(tabId);
+        const pageStore = µb.pageStoreFromTabId(tabId);
         if ( pageStore !== null ) {
             state = pageStore.getNetFilteringSwitch() ? 1 : 0;
             if ( state === 1 ) {
-                if ( (parts & 0b0010) !== 0 && pageStore.perLoadBlockedRequestCount ) {
-                    badge = µb.formatCount(
-                        pageStore.perLoadBlockedRequestCount
-                    );
+                if ( (parts & 0b0010) !== 0 ) {
+                    const blockCount = pageStore.counts.blocked.any;
+                    if ( blockCount !== 0 ) {
+                        badge = µb.formatCount(blockCount);
+                    }
                 }
                 if ( (parts & 0b0100) !== 0 ) {
                     color = computeBadgeColor(
@@ -1057,7 +1072,7 @@ vAPI.tabs = new vAPI.Tabs();
     return function(tabId, newParts = 0b0111) {
         if ( typeof tabId !== 'number' ) { return; }
         if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
-        let currentParts = tabIdToDetails.get(tabId);
+        const currentParts = tabIdToDetails.get(tabId);
         if ( currentParts === newParts ) { return; }
         if ( currentParts === undefined ) {
             self.requestIdleCallback(
@@ -1074,23 +1089,19 @@ vAPI.tabs = new vAPI.Tabs();
 /******************************************************************************/
 
 µBlock.updateTitle = (( ) => {
-    const tabIdToTimer = new Map();
+    const tabIdToCount = new Map();
     const delay = 499;
 
-    const tryAgain = function(entry) {
-        if ( entry.count === 1 ) { return false; }
-        entry.count -= 1;
-        tabIdToTimer.set(
-            entry.tabId,
-            vAPI.setTimeout(( ) => { updateTitle(entry); }, delay)
-        );
-        return true;
-    };
-
-    const onTabReady = function(entry, tab) {
-        if ( !tab ) { return; }
+    const updateTitle = async function(tabId) {
+        let count = tabIdToCount.get(tabId);
+        if ( count === undefined ) { return; }
+        tabIdToCount.delete(tabId);
+        const tab = await vAPI.tabs.get(tabId);
+        if ( tab instanceof Object === false || tab.discarded === true ) {
+            return;
+        }
         const µb = µBlock;
-        const pageStore = µb.pageStoreFromTabId(entry.tabId);
+        const pageStore = µb.pageStoreFromTabId(tabId);
         if ( pageStore === null ) { return; }
         // Firefox needs this: if you detach a tab, the new tab won't have
         // its rawURL set. Concretely, this causes the logger to report an
@@ -1098,35 +1109,32 @@ vAPI.tabs = new vAPI.Tabs();
         // TODO: Investigate for a fix vAPI-side.
         pageStore.rawURL = tab.url;
         µb.pageStoresToken = Date.now();
-        if ( !tab.title && tryAgain(entry) ) { return; }
         // https://github.com/gorhill/uMatrix/issues/225
-        // Sometimes title changes while page is loading.
-        const settled = tab.title && tab.title === pageStore.title;
+        //   Sometimes title changes while page is loading.
+        const settled =
+            typeof tab.title === 'string' &&
+            tab.title !== '' &&
+            tab.title === pageStore.title;
         pageStore.title = tab.title || tab.url || '';
-        if ( !settled ) {
-            tryAgain(entry);
-        }
+        if ( settled ) { return; }
+        if ( tabIdToCount.has(tabId) ) { return; }
+        count -= 1;
+        if ( count === 0 ) { return; }
+        tabIdToCount.set(tabId, count);
+        updateTitleAsync(tabId);
     };
 
-    const updateTitle = async function(entry) {
-        tabIdToTimer.delete(entry.tabId);
-        const tab = await vAPI.tabs.get(entry.tabId);
-        onTabReady(entry, tab);
+    const updateTitleAsync = function(tabId) {
+        vAPI.setTimeout(( ) => { updateTitle(tabId); }, delay);
     };
 
     return function(tabId) {
         if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
-        const timer = tabIdToTimer.get(tabId);
-        if ( timer !== undefined ) {
-            clearTimeout(timer);
+        const count = tabIdToCount.get(tabId);
+        tabIdToCount.set(tabId, 5);
+        if ( count === undefined ) {
+            updateTitleAsync(tabId);
         }
-        tabIdToTimer.set(
-            tabId,
-            vAPI.setTimeout(
-                updateTitle.bind(null, { tabId: tabId, count: 5 }),
-                delay
-            )
-        );
     };
 })();
 
@@ -1140,13 +1148,14 @@ vAPI.tabs = new vAPI.Tabs();
     let pageStoreJanitorSampleAt = 0;
     let pageStoreJanitorSampleSize = 10;
 
+    const checkTab = async tabId => {
+        const tab = await vAPI.tabs.get(tabId);
+        if ( tab instanceof Object && tab.discarded !== true ) { return; }
+        µBlock.unbindTabFromPageStore(tabId);
+    };
+
     const pageStoreJanitor = function() {
         const tabIds = Array.from(µBlock.pageStores.keys()).sort();
-        const checkTab = async tabId => {
-            const tab = await vAPI.tabs.get(tabId);
-            if ( tab ) { return; }
-            µBlock.unbindTabFromPageStats(tabId);
-        };
         if ( pageStoreJanitorSampleAt >= tabIds.length ) {
             pageStoreJanitorSampleAt = 0;
         }

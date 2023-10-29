@@ -29,7 +29,7 @@
 !   this is just disguised tracking
 ||taboola.com^$3p
 
-! Spotted on <http://venturebeat.com/>: no www site, and no resource returned.
+! Spotted on <https://venturebeat.com/>: no www site, and no resource returned.
 ! Belong to Amazon.com. The GET request is full of tracker-looking data.
 ||silkenthreadiness.info^
 
@@ -52,24 +52,22 @@
 ! https://www.reddit.com/r/firefox/comments/3pwcey/firefox_extension_download_manager_s3_asks_for/
 ! https://www.reddit.com/r/chrome/comments/473ves/help_how_to_remove_qipru_redirect_when_searching/
 ||lnkr.us^$document
-||metrext.com^$document
 ||icontent.us^$document
 ||qip.ng^$document
 ||qip.ru^$document
 ! https://github.com/gorhill/uBlock/issues/1411#issuecomment-201031771
 ||ratexchange.net^
-||trendtext.eu^
 ||adnotbad.com^
-||adserv.info^
 ||serverads.net^
 ||jsfuel.com^
-||spaceshipad.com^
 ||takethatad.com^
 ||tradeadsexchange.com^
 
 ! https://www.reddit.com/r/ublock/comments/47o2ih/ublock_disabling_all_javascript_links/d0fhock
 ! Time to bring this filter out of experimental status
 ||googletagservices.com/tag/js/gpt.js$script,redirect=googletagservices.com/gpt.js
+||securepubads.g.doubleclick.net/tag/js/gpt.js$script,redirect=googletagservices_gpt.js
+||pagead2.googlesyndication.com/tag/js/gpt.js$script,redirect=googletagservices_gpt.js
 
 ! https://github.com/gorhill/uBlock/issues/1265
 ||scorecardresearch.com/beacon.js$script,redirect=scorecardresearch.com/beacon.js
@@ -91,9 +89,6 @@ free18.net,gadgetlove.com,nrc.gov,onbeing.org,rapgenius.com,schonmagazine.com,te
 @@||addthis.com/js/*/addthis_widget.js$script,domain=amd.com
 @@||addthisedge.com/live/$script,domain=amd.com
 
-! Foil blocker-sniffer code on Condé Nast sites.
-architecturaldigest.com,arstechnica.com,bonappetit.com,brides.com,cntraveler.com,details.com,epicurious.com,gq.com,golfdigest.com,newyorker.com,pitchfork.com,self.com,teenvogue.com,thescene.com,vanityfair.com,vogue.com,wmagazine.com##+js(fuckadblock.js-3.2.0)
-
 ! Examples of what is fixed by even an unfilled dummy API:
 ! https://twitter.com/kenn_butler/status/709163241021317120
 ! https://adblockplus.org/forum/viewtopic.php?f=10&t=48183
@@ -106,59 +101,21 @@ architecturaldigest.com,arstechnica.com,bonappetit.com,brides.com,cntraveler.com
 ! https://github.com/gorhill/uBlock/issues/2155
 ||widgets.outbrain.com/outbrain.js$script,redirect=widgets.outbrain.com/outbrain.js
 
-! Fingerprinting script: http://www.thisisacoolthing.com/fp.js
-||thisisacoolthing.com^
-! https://forums.lanik.us/viewtopic.php?p=110198
-||thisisanothercoolthing.com^
-
-! https://github.com/uBlockOrigin/uAssets/issues/227
-/g00/*/clientprofiler/adb
-
-! gravity.com, essentially just like Taboola, Outbrain.
-! Creates "recommended" click-baity links which point back to their servers,
-! meaning that as a 3rd-party, this increases the privacy exposure of visitors.
-! Will starts with narrower filters, will broaden if required while keeping
-! this 3rd-party under watch.
-! Example site using it: http://www.huffingtonpost.co.uk/
-||rma-api.gravity.com/*/api/intelligence
-||api.gravity.com/*/recommendations
-||b.grvcdn.com/moth-min.js
-! The following filters are the ssl counterparts of the ones above. They were
-! spotted on: https://techcrunch.com/
-! The links were not click-baity, they APPEARED to be just 1st-party links.
-! However, clicking on any of these links caused the browser to visit 3rd-party
-! rma-api.gravity.com before being redirected back to the expected 1st-party
-! content.
-||secure-api.gravity.com/*/api/intelligence
-||b-ssl.grvcdn.com/moth-min.js
-
 ! pubexchange.com: "The traffic exchange network"
 ! Examples of pages using it:
-!   http://variety.com/2017/film/news/james-franco-the-disaster-artist-trailer-preview-1202497897/
+! https://variety.com/2017/film/news/james-franco-the-disaster-artist-trailer-preview-1202497897/
 ||pubexchange.com^$3p
 
 ! https://github.com/uBlockOrigin/uAssets/issues/713
 ||google-analytics.com/analytics.js$important,script,redirect=google-analytics.com/analytics.js,domain=support.amd.com
 ||googletagmanager.com/gtm.js$important,script,redirect=googletagmanager.com/gtm.js,domain=support.amd.com
 
-! https://forums.lanik.us/viewtopic.php?f=62&t=39090
-||salemove.com^$3p
-
-! https://github.com/uBlockOrigin/uAssets/issues/2013
-||callreports.com^$3p
-
-! abort adBack.co script
-! https://github.com/uBlockOrigin/uAssets/issues/3169
-5euros.com,astucesexpress.com,alsumaria.tv,americanlisted.com,audiofanzine.com,basketusa.com,betaseries.com,blog-rct.com,blogautomobile.fr,boulistenaute.com,butfootballclub.fr,cabaneaidees.com,chezasite.com,clubic.com,cuisineactuelle.fr,cuisineaz.com,deco.fr,focus-numerique.com,football365.fr,fourchette-et-bikini.fr,gamekult.com,grands-meres.net,lequipe.fr,lesoir.be,livepeople.fr,maison-et-domotique.com,mercato365.com,nicematin.com,monacomatin.mc,nrj-play.fr,obsev.com,paroles-musique.com,rtl.be,rugby365.fr,sport365.fr,supertoinette.com,universfreebox.com,varmatin.com##+js(abort-current-inline-script.js, setTimeout, adback)
-5euros.com,astucesexpress.com,alsumaria.tv,americanlisted.com,audiofanzine.com,basketusa.com,betaseries.com,blog-rct.com,blogautomobile.fr,boulistenaute.com,butfootballclub.fr,cabaneaidees.com,chezasite.com,clubic.com,cuisineactuelle.fr,cuisineaz.com,deco.fr,focus-numerique.com,football365.fr,fourchette-et-bikini.fr,gamekult.com,grands-meres.net,lequipe.fr,lesoir.be,livepeople.fr,maison-et-domotique.com,mercato365.com,nicematin.com,monacomatin.mc,nrj-play.fr,obsev.com,paroles-musique.com,rtl.be,rugby365.fr,sport365.fr,supertoinette.com,universfreebox.com,varmatin.com##+js(setTimeout-defuser.js, .API, 0)
-||scappoosebirds.com^$3p
-
 ! https://github.com/uBlockOrigin/uAssets/issues/3251
-teamskeet.com##+js(set-constant.js, $.tstracker, noopFunc)
+teamskeet.com##+js(set, $.tstracker, noopFunc)
 
 ! https://github.com/uBlockOrigin/uAssets/issues/4138
-rediff.com##+js(remove-attr.js, onclick, [onclick^="track"])
-rediff.com##+js(remove-attr.js, onmousedown, [onmousedown^="return enc(this,'https://track.rediff.com"])
+rediff.com##+js(ra, onclick, [onclick^="track"])
+rediff.com##+js(ra, onmousedown, [onmousedown^="return enc(this,'https://track.rediff.com"])
 
 ! https://www.reddit.com/r/uBlockOrigin/comments/b9qsix/new_reddit_tracks_a_ton_more_data_someone_said/
 ||reddit.com/api/jail/$xhr,1p
@@ -167,7 +124,7 @@ rediff.com##+js(remove-attr.js, onmousedown, [onmousedown^="return enc(this,'htt
 ||colpirio.com^$3p
 
 ! https://www.reddit.com/r/uBlockOrigin/comments/bvlumg/oldredditcom_outbound_link_redirect/
-old.reddit.com##+js(remove-attr.js, data-outbound-url)
+old.reddit.com##+js(ra, data-outbound-url)
 
 ! https://github.com/uBlockOrigin/uAssets/pull/5997
 ||docs.google.com/*/logImpressions?$xhr,redirect=nooptext,domain=docs.google.com
@@ -179,28 +136,107 @@ sfr.fr##+js(aopr, _oEa)
 ! https://github.com/uBlockOrigin/uBlock-issues/issues/780#issuecomment-558734257
 brillen.de##+js(acis, document.createElement, 'script')
 ||marketing.net.*^$1p
-||sw88.espn.com^
 
 ! thesaurus.com / dictionary.com Adblock detection
 dictionary.com,thesaurus.com##+js(aopr, adDetection)
 
-! https://usefathom.com/
-||usefathom.com^$3p
-||usesfathom.com^$3p
-
 ! https://github.com/uBlockOrigin/uAssets/issues/7118
 ||vidtech.cbsinteractive.com^*/tracking/$script,redirect=noop.js,important
-
-! https://www.reddit.com/r/uBlockOrigin/comments/fqjltj/podcast_advert/
-||telemetry.art19.com^
 
 ! https://github.com/uBlockOrigin/uAssets/issues/7178
 !#if env_chromium
 ||carsensor.net/usedcar/modules/clicklog_$xhr,1p,important,redirect=noop.txt
 !#endif
 
-! https://github.com/AdguardTeam/AdguardFilters/issues/50338
-||tracker.520call.me^
-
 ! https://forums.lanik.us/viewtopic.php?p=153915#p153915
-||googletagmanager.com/gtm.js$important,script,redirect=noopjs,domain=tv-asahi.co.jp
+@@||googletagmanager.com/gtm.js$script,redirect-rule,domain=tv-asahi.co.jp
+
+! https://github.com/uBlockOrigin/uAssets/issues/478#issuecomment-612229916
+/analytics/analytics.$~xmlhttprequest,3p
+/ga_setup.js$3p
+/google-analytics.$3p
+/googleanalytics.js$3p
+-google-analytics/$3p
+/google-analytics.$script,3p
+
+! https://github.com/uBlockOrigin/uAssets/pull/4961
+||the-japan-news.com/modules/js/lib/fgp/fingerprint2.js$script,redirect=fingerprint2.js,important
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/57295
+||mtsa.com.my/mtcs.php/pageview/track^$image
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/57325
+||api.tumblr.com/*/share/stats$script,3p
+
+! https://github.com/uBlockOrigin/uAssets/issues/7833
+frogogo.ru##+js(aopw, ADMITAD)
+||artfut.com/static/tagtag.$script,3p,redirect=noop.js
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/62696
+||freegames.io/log^
+
+! xhamster stats collection
+||collector.xhamster*.*^
+
+! https://github.com/uBlockOrigin/uAssets/issues/8105
+! block known tracking honeypots
+||copyhomework.com^
+||coursecopy.com^
+||quiztoolbox.com^
+||quizlookup.com^
+||studyeffect.com^
+||testbooksolutions.com^
+
+! https://github.com/easylist/easylist/issues/6471
+/^https?:\/\/js.*\/t\/[0-9]{3}\/[0-9]{3}\/[a-z0-9]{7,8}\.js/$script,3p,badfilter
+/^https?:\/\/js\.[-.0-9a-z]+\/t\/[0-9]{3}\/[0-9]{3}\/a[0-9]{7,9}\.js$/$script,3p
+
+! https://github.com/uBlockOrigin/uBlock-issues/issues/1388
+@@||googletagmanager.com/gtm.js$script,redirect-rule,domain=rocketnews24.com
+
+! https://github.com/uBlockOrigin/uAssets/commit/ee5aec09e45376b7e6fb50ff56cb54425826df0d#commitcomment-44879744
+/stats.php?*event=$image
+
+! beastpics.club etc.
+/check.php?t=*&rand=$image,1p
+
+! https://github.com/easylist/easylist/issues/6724
+/jquery.js?*&rx=*&foxtail=$image,1p
+||jsdelivr.net/npm/skx@*/optical.js
+
+! hd21.com analytics
+||cnt.hd21.com^
+||hd21.com/ajax/track?
+
+! drtuber.desi analytics
+||drtuber.*/ajax/track?track_type=
+
+! fastly click-through
+beaumontenterprise.com,chron.com,ctinsider.com,ctpost.com,expressnews.com,houstonchronicle.com,lmtonline.com,middletownpress.com,mrt.com,newstimes.com,nhregister.com,registercitizen.com,sfchronicle.com,stamfordadvocate.com,thehour.com,timesunion.com##+js(cookie-remover, realm.cookiesAndJavascript)
+
+! piano.io beacon
+||piano.io^$ping
+
+! dekki.com analytics
+||playbrain.io/analytics/
+
+! https://github.com/uBlockOrigin/uBlock-issues/issues/1553
+!#if env_chromium
+*##+js(no-floc)
+!#endif
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/80625
+tweakers.net##+js(aopr, WebTrekkClickMap)
+tweakers.net##+js(aopr, snowplow)
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/81533
+||yuktamedia.com^$3p
+
+! tranny.one geo code
+||tranny.one/?area=ajaxGeo
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/81778
+||gamedock.io^$3p
+
+! https://github.com/AdguardTeam/AdguardFilters/issues/81867
+||proxycheck.io^$3p

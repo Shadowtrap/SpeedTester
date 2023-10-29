@@ -24,7 +24,7 @@ endTime = None
 def settingNumberofTrials():
     global numberOfTrials
     try:
-        numberOfTrials = (input("How many speed tests do you wish to do? "))
+        numberOfTrials = int(input("How many speed tests do you wish to do? "))
         if numberOfTrials < 0:
             print("Incorrect Input......PLease Try Again or Type 0 to Quit Execution")
             time.sleep(2)
@@ -69,7 +69,7 @@ except:
 
 #Starts the speed test
 def startTest():
-    global started
+    global started, testsFailed
     if not started:
         try:
             goButton = driver.find_element_by_xpath(
@@ -136,6 +136,8 @@ def redoTest():
         testInProgress()
         time.sleep(waitTime)
         addResult()
+        time.sleep(waitTime)
+        driver.get('http://www.speedtest.net')
 
 
 redoTest()

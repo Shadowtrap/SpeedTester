@@ -322,7 +322,7 @@ const matchBucket = function(url, hostname, bucket, start) {
     }
 
     // Change -- but only if the user setting actually exists.
-    let mustSave = us.hasOwnProperty(name) && value !== us[name];
+    const mustSave = us.hasOwnProperty(name) && value !== us[name];
     if ( mustSave ) {
         us[name] = value;
     }
@@ -331,11 +331,16 @@ const matchBucket = function(url, hostname, bucket, start) {
     switch ( name ) {
     case 'advancedUserEnabled':
         if ( value === true ) {
-            us.dynamicFilteringEnabled = true;
+            us.popupPanelSections |= 0b11111;
         }
         break;
     case 'autoUpdate':
         this.scheduleAssetUpdater(value ? 7 * 60 * 1000 : 0);
+        break;
+    case 'cnameUncloakEnabled':
+        if ( vAPI.net.canUncloakCnames === true ) {
+            vAPI.net.setOptions({ cnameUncloakEnabled: value === true });
+        }
         break;
     case 'collapseBlocked':
         if ( value === false ) {
@@ -414,7 +419,12 @@ const matchBucket = function(url, hostname, bucket, start) {
 
 /******************************************************************************/
 
-µBlock.elementPickerExec = async function(tabId, targetElement, zap = false) {
+µBlock.elementPickerExec = async function(
+    tabId,
+    frameId,
+    targetElement,
+    zap = false,
+) {
     if ( vAPI.isBehindTheSceneTabId(tabId) ) { return; }
 
     this.epickerArgs.target = targetElement || '';
@@ -422,13 +432,16 @@ const matchBucket = function(url, hostname, bucket, start) {
 
     // https://github.com/uBlockOrigin/uBlock-issues/issues/40
     //   The element picker needs this library
-    vAPI.tabs.executeScript(tabId, {
-        file: '/lib/diff/swatinem_diff.js',
-        runAt: 'document_end',
-    });
+    if ( zap !== true ) {
+        vAPI.tabs.executeScript(tabId, {
+            file: '/lib/diff/swatinem_diff.js',
+            runAt: 'document_end',
+        });
+    }
 
     await vAPI.tabs.executeScript(tabId, {
-        file: '/js/scriptlets/element-picker.js',
+        file: '/js/scriptlets/epicker.js',
+        frameId,
         runAt: 'document_end',
     });
 
@@ -501,8 +514,18 @@ const matchBucket = function(url, hostname, bucket, start) {
     // https://github.com/chrisaljoudi/uBlock/issues/420
     this.cosmeticFilteringEngine.removeFromSelectorCache(srcHostname, 'net');
 
+    if ( details.tabId === undefined ) { return; }
+
     if ( requestType.startsWith('3p') ) {
         this.updateToolbarIcon(details.tabId, 0b100);
+    }
+
+    if ( requestType === '3p' && action === 3 ) {
+        vAPI.tabs.executeScript(details.tabId, {
+            file: '/js/scriptlets/load-3p-css.js',
+            allFrames: true,
+            runAt: 'document_idle',
+        });
     }
 };
 
@@ -622,21 +645,6 @@ const matchBucket = function(url, hostname, bucket, start) {
 
     return parse;
 })();
-
-/******************************************************************************/
-
-// https://github.com/NanoMeow/QuickReports/issues/6#issuecomment-414516623
-//   Inject as early as possible to make the cosmetic logger code less
-//   sensitive to the removal of DOM nodes which may match injected
-//   cosmetic filters.
-
-µBlock.logCosmeticFilters = function(tabId, frameId) {
-    vAPI.tabs.executeScript(tabId, {
-        file: '/js/scriptlets/cosmetic-logger.js',
-        frameId: frameId,
-        runAt: 'document_start'
-    });
-};
 
 /******************************************************************************/
 

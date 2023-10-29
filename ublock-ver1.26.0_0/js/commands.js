@@ -26,8 +26,34 @@
 /******************************************************************************/
 
 µBlock.canUseShortcuts = vAPI.commands instanceof Object;
-µBlock.canUpdateShortcuts = µBlock.canUseShortcuts &&
-                            typeof vAPI.commands.update === 'function';
+
+// https://github.com/uBlockOrigin/uBlock-issues/issues/386
+//   Firefox 74 and above has complete shotcut assignment user interface.
+µBlock.canUpdateShortcuts =
+    µBlock.canUseShortcuts &&
+    vAPI.webextFlavor.soup.has('firefox') &&
+    typeof vAPI.commands.update === 'function';
+
+if ( µBlock.canUpdateShortcuts ) {
+    self.addEventListener(
+        'webextFlavor',
+        ( ) => {
+            const µb = µBlock;
+            µb.canUpdateShortcuts = vAPI.webextFlavor.major < 74;
+            if ( µb.canUpdateShortcuts === false ) { return; }
+            vAPI.storage.get('commandShortcuts').then(bin => {
+                if ( bin instanceof Object === false ) { return; }
+                const shortcuts = bin.commandShortcuts;
+                if ( Array.isArray(shortcuts) === false ) { return; }
+                µb.commandShortcuts = new Map(shortcuts);
+                for ( const [ name, shortcut ] of shortcuts ) {
+                    vAPI.commands.update({ name, shortcut });
+                }
+            });
+        },
+        { once: true }
+    );
+}
 
 /******************************************************************************/
 
@@ -62,6 +88,8 @@ const relaxBlockingMode = (( ) => {
         // TODO: Reset to original blocking profile?
         if ( newProfileBits === undefined ) { return; }
 
+        const noReload = (newProfileBits & 0b00000001) === 0;
+
         if (
             (curProfileBits & 0b00000010) !== 0 &&
             (newProfileBits & 0b00000010) === 0
@@ -78,6 +106,7 @@ const relaxBlockingMode = (( ) => {
                 (newProfileBits & 0b00000100) === 0
             ) {
                 µb.toggleFirewallRule({
+                    tabId: noReload ? tab.id : undefined,
                     srcHostname: hn,
                     desHostname: '*',
                     requestType: '3p',
@@ -109,7 +138,7 @@ const relaxBlockingMode = (( ) => {
         }
 
         // Reload the target tab?
-        if ( (newProfileBits & 0b00000001) === 0 ) { return; }
+        if ( noReload ) { return; }
 
         // Reload: use a timer to coalesce bursts of reload commands.
         let timer = reloadTimers.get(tab.id);
@@ -139,6 +168,7 @@ vAPI.commands.onCommand.addListener(async command => {
         µb.epickerArgs.mouse = false;
         µb.elementPickerExec(
             tab.id,
+            0,
             undefined,
             command === 'launch-element-zapper'
         );
@@ -153,7 +183,15 @@ vAPI.commands.onCommand.addListener(async command => {
         µb.openNewTab({
             url: `logger-ui.html${hash}`,
             select: true,
-            index: -1
+            index: -1,
+        });
+        break;
+    }
+    case 'open-dashboard': {
+        µb.openNewTab({
+            url: 'dashboard.html',
+            select: true,
+            index: -1,
         });
         break;
     }

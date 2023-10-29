@@ -14,4 +14,8 @@ Supported Operating Systems:
     MacOS 64-bit
     Linux 64-bit
 
-<h5>NOTE: Untested with MacOS and Linux and no support for ARM processors yet</h5>
+<h5>
+    <u>NOTE:</u> Not tested with MacOS and Linux and no support for ARM processors yet.
+</h5>
+
+#

@@ -85,7 +85,7 @@
   },
   "popupBlockedStats": {
     "message": "{{count}} ანუ {{percent}}%",
-    "description": "Example: 15 or 13%"
+    "description": "Example: 15 (13%)"
   },
   "popupBlockedSinceInstallPrompt": {
     "message": "დაყენების შემდგომ",
@@ -179,25 +179,33 @@
     "message": "დააწკაპეთ JavaScript-ზე შეზღუდვის მოსახსნელად ამ საიტზე",
     "description": "Tooltip for the no-scripting per-site switch"
   },
+  "popupNoPopups_v2": {
+    "message": "ამომხტომი ფანჯრები",
+    "description": "Caption for the no-popups per-site switch"
+  },
   "popupNoLargeMedia_v2": {
     "message": "დიდი მედიაფაილები",
-    "description": "Tip for the no-large-media per-site switch"
+    "description": "Caption for the no-large-media per-site switch"
   },
   "popupNoCosmeticFiltering_v2": {
     "message": "ხილული ელემენტების გაფილტვრა",
-    "description": "Tip for the no-cosmetic-filtering per-site switch"
+    "description": "Caption for the no-cosmetic-filtering per-site switch"
   },
   "popupNoRemoteFonts_v2": {
     "message": "ვებშრიფტები",
-    "description": "Tip for the no-remote-fonts per-site switch"
+    "description": "Caption for the no-remote-fonts per-site switch"
   },
   "popupNoScripting_v2": {
     "message": "JavaScript",
-    "description": "Tip for the no-scripting per-site switch"
+    "description": "Caption for the no-scripting per-site switch"
   },
   "popupMoreButton_v2": {
-    "message": "სხვა",
-    "description": "Label to be used to toggle overview panel"
+    "message": "ვრცლად",
+    "description": "Label to be used to show popup panel sections"
+  },
+  "popupLessButton_v2": {
+    "message": "მოკლედ",
+    "description": "Label to be used to hide popup panel sections"
   },
   "popupTipGlobalRules": {
     "message": "გლობალური წესები: ეს სვეტი არის წესებისთვის, რომლებიც მოქმედებს ყველა საიტზე.",
@@ -254,6 +262,18 @@
   "popupHitDomainCount": {
     "message": "{{total}}-დან {{count}}",
     "description": "appears in popup"
+  },
+  "popupVersion": {
+    "message": "ვერსია",
+    "description": "Example of use: Version 1.26.4"
+  },
+  "popup3pScriptFilterTip": {
+    "message": "↑: გამოკვეთა რიგების, რომლებიც მე-3 მხარის სკრიპტებითაა",
+    "description": "Tooltip shown when hovering small filtering widget in '3rd-party scripts' cell"
+  },
+  "popup3pFrameFilterTip": {
+    "message": "↑: გამოკვეთა რიგების, რომლებიც მე-3 მხარის ჩარჩოებითაა",
+    "description": "Tooltip shown when hovering small filtering widget in '3rd-party frames' cell"
   },
   "pickerCreate": {
     "message": "შექმნა",
@@ -359,9 +379,9 @@
     "message": "CSP მოხსენებების აკრძალვა",
     "description": "background information: https://github.com/gorhill/uBlock/issues/3150"
   },
-  "settingsStorageUsed": {
-    "message": "გამოყენებული მოცულობა: {{value}} ბაიტი",
-    "description": "English: Storage used: {{}} bytes"
+  "settingsUncloakCnamePrompt": {
+    "message": "დადგენილი სახელების გამოაშკარავება",
+    "description": "background information: https://github.com/uBlockOrigin/uBlock-issues/issues/1513"
   },
   "settingsLastRestorePrompt": {
     "message": "ბოლო აღდგენა:",
@@ -459,6 +479,10 @@
     "message": "მოძველებული",
     "description": "used as a tooltip for the out-of-date icon beside a list"
   },
+  "3pViewContent": {
+    "message": "შიგთავსის ნახვა",
+    "description": "used as a tooltip for eye icon beside a list"
+  },
   "3pLastUpdate": {
     "message": "ბოლო განახლება: {{ago}}.\nდააწკაპეთ ახლავე გასაახლებლად.",
     "description": "used as a tooltip for the clock icon beside a list"
@@ -539,9 +563,25 @@
     "message": "წესის აგებულება: <code>წყარო დანიშნულება მოთხოვნის სახე მოქმედება</code> (<a href='https://github.com/gorhill/uBlock/wiki/Dynamic-filtering:-rule-syntax'>მასალები სრულად</a>).",
     "description": "English: dynamic rule syntax and full documentation."
   },
+  "rulesSort": {
+    "message": "დალაგება:",
+    "description": "English: label for sort option."
+  },
+  "rulesSortByType": {
+    "message": "წესის სახეობა",
+    "description": "English: a sort option for list of rules."
+  },
+  "rulesSortBySource": {
+    "message": "წყარო",
+    "description": "English: a sort option for list of rules."
+  },
+  "rulesSortByDestination": {
+    "message": "დანიშნულება",
+    "description": "English: a sort option for list of rules."
+  },
   "whitelistPrompt": {
     "message": "მითითებული გამონაკლისები განსაზღვრავს, თუ რომელ ვებგვერდზე უნდა გამოირთოს uBlock Origin. თითოეული ჩანაწერი ცალკეულ ხაზზე უნდა იყოს. არასწორი მითითებები უგულებელყოფილი იქნება გაფრთხილების გარეშე და აღინიშნება კომენტარად.",
-    "description": "English: An overview of the content of the dashboard's Whitelist pane."
+    "description": "The name of the trusted sites pane."
   },
   "whitelistImport": {
     "message": "შემოტანა და დამატება",
@@ -553,7 +593,7 @@
   },
   "whitelistExportFilename": {
     "message": "ჩემი-ublock-გამონაკლისები_{{datetime}}.txt",
-    "description": "English: my-ublock-whitelist_{{datetime}}.txt"
+    "description": "The default filename to use for import/export purpose"
   },
   "whitelistApply": {
     "message": "ცვლილებების ასახვა",
@@ -641,6 +681,10 @@
   },
   "loggerRowFiltererBuiltinAllowed": {
     "message": "დაშვებული",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerRowFiltererBuiltinModified": {
+    "message": "ჩასწორებული",
     "description": "A keyword in the built-in row filtering expression"
   },
   "loggerRowFiltererBuiltin1p": {
@@ -827,6 +871,18 @@
     "message": "მოხალისეები",
     "description": "English: Contributors"
   },
+  "aboutSourceCode": {
+    "message": "პირველწყარო კოდი",
+    "description": "Link text to source code repo"
+  },
+  "aboutTranslations": {
+    "message": "თარგმანები",
+    "description": "Link text to translations repo"
+  },
+  "aboutFilterLists": {
+    "message": "ფილტრების სიები",
+    "description": "Link text to uBO's own filter lists repo"
+  },
   "aboutDependencies": {
     "message": "ცალკეული დაქვემდებარებული პროექტები (GPLv3-თან თავსებადი):",
     "description": "Shown in the About pane"
@@ -865,7 +921,11 @@
   },
   "subscriberConfirm": {
     "message": "uBlock₀: გსურთ შემდეგი URL ბმულის საკუთარ ფილტრის წესებში ჩამატება?\n\nდასახელება: „{{title}}“\nURL: {{url}}",
-    "description": "English: The message seen by the user to confirm subscription to a ABP filter list"
+    "description": "No longer used"
+  },
+  "subscribeButton": {
+    "message": "გამოწერა",
+    "description": "For the button used to subscribe to a filter list"
   },
   "elapsedOneMinuteAgo": {
     "message": "ერთი წუთის წინ",
@@ -905,11 +965,11 @@
   },
   "docblockedPrompt1": {
     "message": "uBlock Origin-მა შეზღუდა მოცემული გვერდის ჩატვირთვა:",
-    "description": "English: uBlock₀ has prevented the following page from loading:"
+    "description": "Used in the strict-blocking page"
   },
   "docblockedPrompt2": {
     "message": "მოცემული ფილტრიდან გამომდინარე",
-    "description": "English: Because of the following filter"
+    "description": "Used in the strict-blocking page"
   },
   "docblockedNoParamsPrompt": {
     "message": "პარამეტრების გარეშე",
@@ -979,6 +1039,10 @@
     "message": "ბაიტი",
     "description": ""
   },
+  "contextMenuBlockElementInFrame": {
+    "message": "ელემენტის შეზღუდვა ჩარჩოში...",
+    "description": "An entry in the browser's contextual menu"
+  },
   "contextMenuTemporarilyAllowLargeMediaElements": {
     "message": "დიდი მედია-ელემენტების დროებით დაშვება",
     "description": "A context menu entry, present when large media elements have been blocked on the current site"
@@ -1002,6 +1066,26 @@
   "relaxBlockingMode": {
     "message": "მსუბუქი შეზღუდვის რეჟიმი",
     "description": "Label for keyboard shortcut used to relax blocking mode (meant to replace 'Toggle blocking profile')"
+  },
+  "storageUsed": {
+    "message": "გამოყენებული მოცულობა: {{value}} {{unit}}",
+    "description": " In Setting pane, renders as (example): Storage used: 13.2 MB"
+  },
+  "KB": {
+    "message": "კბ",
+    "description": "short for 'kilobytes'"
+  },
+  "MB": {
+    "message": "მბ",
+    "description": "short for 'megabytes'"
+  },
+  "GB": {
+    "message": "გბ",
+    "description": "short for 'gigabytes'"
+  },
+  "clickToLoad": {
+    "message": "დაწკაპეთ ჩასატვირთად",
+    "description": "Message used in frame placeholders"
   },
   "dummy": {
     "message": "This entry must be the last one",

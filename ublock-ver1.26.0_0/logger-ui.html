@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=560, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="css/common.css">
-<link rel="stylesheet" href="css/fa-icons.css" type="text/css">
-<link rel="stylesheet" type="text/css" href="css/logger-ui.css">
-<link rel="stylesheet" type="text/css" href="css/logger-ui-inspector.css">
+<link rel="stylesheet" href="css/themes/default.css">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/fa-icons.css">
+<link rel="stylesheet" href="css/logger-ui.css">
+<link rel="stylesheet" href="css/logger-ui-inspector.css">
 <link rel="shortcut icon" type="image/png" href="img/icon_16.png">
 <title data-i18n="statsPageName"></title>
 <style id="vwRendererRuntimeStyles"></style>
@@ -57,11 +58,11 @@
                         <input type="search" placeholder="logFilterPrompt">
                         <span id="filterExprButton" class="button fa-icon expanded" data-i18n-title="loggerRowFiltererBuiltinTip">angle-up</span>
                         <div id="filterExprPicker">
-                            <div><span data-filtex="!" data-i18n="loggerRowFiltererBuiltinNot"></span><span data-filtex="\t--\t|\t<<\t|\t##" data-i18n="loggerRowFiltererBuiltinBlocked"></span><span data-filtex="\t\+\+\t|\t\*\*\t|\t#@#" data-i18n="loggerRowFiltererBuiltinAllowed"></span></div>
+                            <div><span data-filtex="!" data-i18n="loggerRowFiltererBuiltinNot"></span><span data-filtex="\t--\t|\t<<\t|\t##" data-i18n="loggerRowFiltererBuiltinBlocked"></span><span data-filtex="\t\+\+\t|\t\*\*\t|\t#@#" data-i18n="loggerRowFiltererBuiltinAllowed"></span><span data-filtex="[$,](?:csp|queryprune|redirect-rule)=|\t\<\<\t" data-i18n="loggerRowFiltererBuiltinModified"></span></div>
                             <div><span data-filtex="!" data-i18n="loggerRowFiltererBuiltinNot"></span>
                                 <span style="flex-direction: column;">
                                     <div style="margin-bottom: 1px;"><span data-filtex="\t(?:css|(?:inline-)?font)\t">css/font</span><span data-filtex="\timage\t">image</span><span data-filtex="\tmedia\t">media</span><span data-filtex="\t(?:inline-)?script(?:ing)?\t">script</span></div>
-                                    <div><span data-filtex="\t(?:websocket|xhr)\t">xhr</span><span data-filtex="\tframe\t">frame</span><span data-filtex="\t(?:beacon|csp_report|ping|other)\t">other</span><span data-filtex="\t(?:dom|g(?:eneric)?hide|s(?:pecific)?hide)\t">dom</span></div>
+                                    <div><span data-filtex="\t(?:websocket|xhr)\t">xhr</span><span data-filtex="\tframe\t">frame</span><span data-filtex="\t(?:dom|g(?:eneric)?hide|s(?:pecific)?hide)\t">dom</span><span data-filtex="\t(?:beacon|csp_report|doc|ping|popup|popunder|other)\t">other</span></div>
                                 </span>
                             </div>
                             <div><span data-filtex="!" data-i18n="loggerRowFiltererBuiltinNot"></span><span data-filtex="\t(?:0,)?1\t" data-i18n="loggerRowFiltererBuiltin1p"></span><span data-filtex="\t(?:3(?:,\d)?|0,3)\t" data-i18n="loggerRowFiltererBuiltin3p"></span></div>
@@ -107,7 +108,7 @@
         <div class="headers">
             &ensp;
             <span class="header details" data-pane="details" data-i18n="loggerEntryDetailsHeader"></span>
-            <span class="header dynamic hide" data-pane="dynamic" data-i18n="loggerURLFilteringHeader"></span>
+            <span class="header dynamic" data-pane="dynamic" data-i18n="loggerURLFilteringHeader"></span>
             <span class="header static" data-pane="static" data-i18n="loggerStaticFilteringHeader"></span>
             <span class="tools"><span class="fa-icon reload">refresh</span>&ensp;<span class="fa-icon picker">eye-dropper</span></span>
         </div>
@@ -124,7 +125,7 @@
                 <div><span>CNAME</span><span></span></div>
                 <div><span>Original URL</span><span></span></div>
             </div>
-            <div class="pane dynamic hide" data-pane="dynamic">
+            <div class="pane dynamic" data-pane="dynamic">
                 <div class="toolbar row">
                     <span><span id="saveRules" class="fa-icon">lock</span></span>
                     <span>
@@ -141,7 +142,7 @@
             <div class="pane static" data-pane="static">
                 <div></div>
                 <div><textarea class="staticFilter" spellcheck="false" value=""></textarea>
-                   <button id="createStaticFilter" class="custom important" type="button" data-i18n="pickerCreate"></button>
+                   <button id="createStaticFilter" class="important" type="button" data-i18n="pickerCreate"></button>
                </div>
             </div>
         </div>
@@ -153,13 +154,13 @@
     <div id="filterFinderListEntry">
         <span><!--
          --><a href="asset-viewer.html?url=" target="_blank"></a>&nbsp;<!--
-         --><a href="" class="fa-icon" target="_blank">home</a><!--
+         --><a href="#" class="fa-icon" target="_blank">home</a><!--
      --></span>
     </div>
 
     <div id="cosmeticFilteringDialog" class="modalDialog">
         <textarea class="cosmeticFilters" value=""></textarea>
-        <button id="createCosmeticFilters" class="custom important" type="button" data-i18n="pickerCreate"></button>
+        <button id="createCosmeticFilters" class="important" type="button" data-i18n="pickerCreate"></button>
     </div>
 
     <div id="loggerStatsDialog">
@@ -186,20 +187,20 @@
     <div id="loggerSettingsDialog">
         <div><span data-i18n="loggerSettingDiscardPrompt"></span>
             <ul>
-            <li><label data-i18n="loggerSettingPerEntryMaxAge"><input type="number" min="0" max="50000" /></label>
-            <li><label data-i18n="loggerSettingPerTabMaxLoads"><input type="number" min="0" max="1000000" /></label>
-            <li><label data-i18n="loggerSettingPerTabMaxEntries"><input type="number" min="0" max="1000000" /></label>
+            <li><label><span data-i18n="loggerSettingPerEntryMaxAge"><input type="number" min="0" max="50000" step="15" /></span></label>
+            <li><label><span data-i18n="loggerSettingPerTabMaxLoads"><input type="number" min="0" max="1000000" /></span></label>
+            <li><label><span data-i18n="loggerSettingPerTabMaxEntries"><input type="number" min="0" max="1000000" step="100" /></span></label>
             </ul>
         </div>
         <div><span data-i18n="loggerSettingHideColumnsPrompt"></span>
             <ul>
-            <li><label data-i18n="loggerSettingHideColumnTime"><input type="checkbox" data-column="0" /></label>
-            <li><label data-i18n="loggerSettingHideColumnFilter"><input type="checkbox" data-column="1" /></label>
-            <li><label data-i18n="loggerSettingHideColumnContext"><input type="checkbox" data-column="3" /></label>
-            <li><label data-i18n="loggerSettingHideColumnPartyness"><input type="checkbox" data-column="4" /></label>
+            <li><label data-i18n="loggerSettingHideColumnTime"><span class="input checkbox"><input type="checkbox" data-column="0" /><svg viewBox="0 0 24 24"><path d="M1.73,12.91 8.1,19.28 22.79,4.59"/></svg></span></label>
+            <li><label data-i18n="loggerSettingHideColumnFilter"><span class="input checkbox"><input type="checkbox" data-column="1" /><svg viewBox="0 0 24 24"><path d="M1.73,12.91 8.1,19.28 22.79,4.59"/></svg></span></label>
+            <li><label data-i18n="loggerSettingHideColumnContext"><span class="input checkbox"><input type="checkbox" data-column="3" /><svg viewBox="0 0 24 24"><path d="M1.73,12.91 8.1,19.28 22.79,4.59"/></svg></span></label>
+            <li><label data-i18n="loggerSettingHideColumnPartyness"><span class="input checkbox"><input type="checkbox" data-column="4" /><svg viewBox="0 0 24 24"><path d="M1.73,12.91 8.1,19.28 22.79,4.59"/></svg></span></label>
             </ul>
         </div>
-        <div><label data-i18n="loggerSettingPerEntryLineCount"><input type="number" min="2" max="6"></label></div>
+        <div><label><span data-i18n="loggerSettingPerEntryLineCount"><input type="number" min="2" max="6"></span></label></div>
     </div>
 
 </div>

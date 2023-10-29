@@ -1,1010 +1,1094 @@
 {
-   "1pApplyChanges": {
-      "description": "English: Apply changes",
-      "message": "மாற்றங்களைச் செயல்படுத்து"
-   },
-   "1pExport": {
-      "description": "English: Export",
-      "message": "ஏற்று"
-   },
-   "1pExportFilename": {
-      "description": "English: my-ublock-static-filters_{{datetime}}.txt",
-      "message": "my-ublock-static-filters_{{datetime}}.txt"
-   },
-   "1pFormatHint": {
-      "description": "Short information about how to create custom filters",
-      "message": "ஒரு வரிக்கு ஒரு வடிகட்டி. வடிகட்டி என்பது வெறும் வழங்கிப்பெயராக இருக்கலாம், அல்லது Adblock Plus-க்குப் பொருந்தும் வடிகட்டியாக இருக்கலாம். &lsquo;!&rsquo; எனும் எழுத்தில் தொடங்கும் வரிகள் புறக்கணிக்கப்படும்."
-   },
-   "1pImport": {
-      "description": "English: Import and append",
-      "message": "இறக்குமதி செய் மற்றும் இணை"
-   },
-   "1pPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "என் வடிகட்டிகள்"
-   },
-   "3pApplyChanges": {
-      "description": "English: Apply changes",
-      "message": "மாற்றங்களைச் செயல்படுத்து"
-   },
-   "3pAutoUpdatePrompt1": {
-      "description": "A checkbox in the _3rd-party filters_ pane",
-      "message": "வடிகட்டி பட்டியல்களை தானாக புதுப்பி."
-   },
-   "3pExternalListObsolete": {
-      "description": "used as a tooltip for the out-of-date icon beside a list",
-      "message": "காலாவதியாகிவிட்டது"
-   },
-   "3pExternalListsHint": {
-      "description": "Short information about how to use the textarea to import external filter lists by URL",
-      "message": "ஒரு வரிக்கு ஒரு இணைய முகவரி. &lsquo;!&rsquo; எனும் எழுத்தில் தொடங்கும் வரிகள் புறக்கணிக்கப்படும். தவறான முகவரிகளும் அமைதியாகப் புறக்கணிக்கப்படும்."
-   },
-   "3pGroupAds": {
-      "description": "English: Ads",
-      "message": "விளம்பரங்கள்"
-   },
-   "3pGroupAnnoyances": {
-      "description": "The header identifying the filter lists in the category 'annoyances'",
-      "message": "Annoyances"
-   },
-   "3pGroupCustom": {
-      "description": "English: Custom",
-      "message": "தனிபயன்"
-   },
-   "3pGroupDefault": {
-      "description": "Header for the uBlock filters section in 'Filter lists pane'",
-      "message": "Built-in"
-   },
-   "3pGroupMalware": {
-      "description": "English: Malware domains",
-      "message": "தீப்பொருள் ஆள்களங்கள்"
-   },
-   "3pGroupMultipurpose": {
-      "description": "English: Multipurpose",
-      "message": "பல்நோக்கு வடிகட்டி"
-   },
-   "3pGroupPrivacy": {
-      "description": "English: Privacy",
-      "message": "தனியுரிமை"
-   },
-   "3pGroupRegions": {
-      "description": "English: Regions, languages",
-      "message": "மாநில பகுதிகள், மொழிகள் வாரியான"
-   },
-   "3pIgnoreGenericCosmeticFilters": {
-      "description": "This will cause uBO to ignore all generic cosmetic filters.",
-      "message": "பொதுவான ஒப்பனை வடிகட்டிகளை புறக்கணி"
-   },
-   "3pIgnoreGenericCosmeticFiltersInfo": {
-      "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature.",
-      "message": "\u003Cp>Generic cosmetic filters are those cosmetic filters which are meant to apply on all web sites.\u003Cp>Though handled efficiently by uBlock₀, generic cosmetic filters may still contribute measurable memory and CPU overhead on some web pages, especially for large and long-lived ones.\u003Cp>Enabling this option will eliminate the memory and CPU overhead added to web pages as a result of handling generic cosmetic filters, and also lower the memory footprint of uBlock₀ itself.\u003Cp>It is recommended to enable this option on less powerful devices."
-   },
-   "3pImport": {
-      "description": "The label for the checkbox used to import external filter lists",
-      "message": "Import..."
-   },
-   "3pLastUpdate": {
-      "description": "used as a tooltip for the clock icon beside a list",
-      "message": "கடைசி புதுப்பிப்பு: {{ago}}"
-   },
-   "3pListsOfBlockedHostsHeader": {
-      "description": "English: Lists of blocked hosts",
-      "message": "தடைசெய்யப்பட்ட வழங்கிகளின் பட்டியல்"
-   },
-   "3pListsOfBlockedHostsPerListStats": {
-      "description": "Appears aside each filter list in the _3rd-party filters_ pane",
-      "message": "மொத்தம் {{total}} இல் {{used}} பயன்படுத்தப்பட்டது"
-   },
-   "3pListsOfBlockedHostsPrompt": {
-      "description": "Appears at the top of the _3rd-party filters_ pane",
-      "message": "{{netFilterCount}} பிணைய வடிகட்டிகள் + {{cosmeticFilterCount}} ஒப்பனை வடிகட்டிகளிலிருந்து:"
-   },
-   "3pNetworkError": {
-      "description": "used as a tooltip for error icon beside a list",
-      "message": "A network error prevented the resource from being updated."
-   },
-   "3pPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "மூன்றாம் தரப்பு வடிகட்டிகள்"
-   },
-   "3pParseAllABPHideFiltersInfo": {
-      "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature.",
-      "message": "\u003Cp>இந்தத் தேர்வு \u003Ca href=\"https://adblockplus.org/en/faq_internal#elemhide\">Adblock Plus-க்கு ஏற்ற &ldquo;உறுப்பு மறைக்கும்&rdquo; வடிகட்டிகளைப்\u003C/a> படிப்பதையும் பயன்படுத்துவத்தையும் செயல்படுத்தும். இந்த வடிகட்டிகள் அடிப்படையில் மேலோட்டமானவை. இணையப் பக்கத்தின் தோற்றத்தில் தொந்தரவாகக் கருதப்பட்டு, ஆனால் இணையக்கோரிக்கைகளை வடிகட்டும் எஞ்சினின் மூலம் தடுக்கப்பட முடியாத பக்க-உறுப்புகளை, பார்வையிலிருந்து மட்டும் மறைக்கும்\u003C/p>\u003Cp>இந்தத் தேர்வு uBlock₀-இன் நினைவக உபயோகத்தை அதிகரிக்கும்.\u003C/p>"
-   },
-   "3pParseAllABPHideFiltersPrompt1": {
-      "description": "English: Parse and enforce Adblock+ element hiding filters.",
-      "message": "இலக்கணகூறை விவரி மற்றும் ஒப்பனை வடிகட்டிகளை செயல்படுத்து."
-   },
-   "3pPurgeAll": {
-      "description": "A button in the in the _3rd-party filters_ pane",
-      "message": "தற்காலிகச் சேமிப்புகள் அனைத்தையும் அகற்று"
-   },
-   "3pUpdateNow": {
-      "description": "A button in the in the _3rd-party filters_ pane",
-      "message": "இப்போது புதுப்பிக்கவும்"
-   },
-   "3pUpdating": {
-      "description": "used as a tooltip for the spinner icon beside a list",
-      "message": "புதுப்பிக்கிறது..."
-   },
-   "aboutBackupDataButton": {
-      "description": "Text for button to create a backup of all settings",
-      "message": "கோப்பிற்கு காப்பு பிரதி எடு"
-   },
-   "aboutBackupFilename": {
-      "description": "English: my-ublock-backup_{{datetime}}.txt",
-      "message": "my-ublock-backup_{{datetime}}.txt"
-   },
-   "aboutChangelog": {
-      "description": "",
-      "message": "நிரல் மாற்றம் மற்றும் வெளியீடுகளின் பதிவு"
-   },
-   "aboutCode": {
-      "description": "English: Source code (GPLv3)",
-      "message": "மூல நிரல் (பொது மக்கள் உரிமம் பதிப்பு 3)"
-   },
-   "aboutContributors": {
-      "description": "English: Contributors",
-      "message": "பங்களிப்பாளர்கள்"
-   },
-   "aboutDependencies": {
-      "description": "Shown in the About pane",
-      "message": "External dependencies (GPLv3-compatible):"
-   },
-   "aboutIssues": {
-      "description": "Text for a link to official issue tracker",
-      "message": "Issue tracker"
-   },
-   "aboutPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "எம்மைப் பற்றி"
-   },
-   "aboutResetDataButton": {
-      "description": "English: Reset to default settings...",
-      "message": "இயல்புநிலை அமைப்புகளை மீட்டெடு..."
-   },
-   "aboutResetDataConfirm": {
-      "description": "Message asking user to confirm reset",
-      "message": "உங்கள் எல்லா அமைப்புகளும் அகற்றப்படும், பிறகு uBlock மீண்டும் தொடங்கும்.\n\nuBlockகை தொழிற்சாலை அமைப்புகளை மீட்டமைக்கவ?"
-   },
-   "aboutRestoreDataButton": {
-      "description": "English: Restore from file...",
-      "message": "கோப்பிலிருந்து மீட்டெடு..."
-   },
-   "aboutRestoreDataConfirm": {
-      "description": "Message asking user to confirm restore",
-      "message": "உங்கள் எல்லா அமைப்புகளும் காப்புப் பதிவைப் {{time}} பயன்படுத்தி மேலெழுதப்படும், பிறகு uBlock மறுதொடக்கம்.\n\nகாப்புப்பட்ட தரவைப் பயன்படுத்தி உள்ள எல்லா அமைப்புகளையும் மேலெழுதவா?"
-   },
-   "aboutRestoreDataError": {
-      "description": "Message to display when an error occurred during restore",
-      "message": "தகவலை படிக்க முடியவில்லை அல்லது தவறானது"
-   },
-   "aboutSupport": {
-      "description": "A link for where to get support",
-      "message": "ஆதரவு"
-   },
-   "aboutWiki": {
-      "description": "English: project' wiki on GitHub",
-      "message": "விக்கி"
-   },
-   "advancedSettingsPageName": {
-      "description": "Title for the advanced settings page",
-      "message": "மேம்பட்ட அமைப்புகள்"
-   },
-   "advancedSettingsWarning": {
-      "description": "A warning to users at the top of 'Advanced settings' page",
-      "message": "எச்சரிக்கை! இந்த மேம்பட்ட அமைப்புகளை உங்கள் சொந்த ஆபத்தில் மாற்றவும்."
-   },
-   "assetViewerPageName": {
-      "description": "Title for the asset viewer page",
-      "message": "uBlock -- உடைமை பார்வையாளர்"
-   },
-   "cloudDeviceNamePrompt": {
-      "description": "used as a prompt for the user to provide a custom device name",
-      "message": "இந்தச் சாதனத்தின் பெயர்:"
-   },
-   "cloudNoData": {
-      "description": "",
-      "message": "...\n..."
-   },
-   "cloudPull": {
-      "description": "tooltip",
-      "message": "மேகக்கணினி சேமிப்பகத்திலிருந்து இறக்கு"
-   },
-   "cloudPullAndMerge": {
-      "description": "tooltip",
-      "message": "மேகக்கணினி சேமிப்பகத்திலிருந்து இறக்கியபின் நடப்பு அமைப்புகளுடன் இணை"
-   },
-   "cloudPush": {
-      "description": "tooltip",
-      "message": "மேகக்கணினி சேமிப்பகத்திற்கு ஏற்று"
-   },
-   "contextMenuTemporarilyAllowLargeMediaElements": {
-      "description": "A context menu entry, present when large media elements have been blocked on the current site",
-      "message": "தற்காலிகமாகப் பெரிய ஒலி‍-ஒளி-படத்தொகுப்புகளின் கூறுகளை அனுமதி"
-   },
-   "dashboardName": {
-      "description": "English: uBlock₀ — Dashboard",
-      "message": "uBlock₀ - நிர்வாக மையம்"
-   },
-   "dashboardUnsavedWarning": {
-      "description": "A warning in the dashboard when navigating away from unsaved changes",
-      "message": "Warning! You have unsaved changes"
-   },
-   "dashboardUnsavedWarningIgnore": {
-      "description": "Label for button to ignore unsaved changes",
-      "message": "பொருட்படுத்தாதே"
-   },
-   "dashboardUnsavedWarningStay": {
-      "description": "Label for button to prevent navigating away from unsaved changes",
-      "message": "Stay"
-   },
-   "docblockedBack": {
-      "description": "English: Go back",
-      "message": "பின் செல்"
-   },
-   "docblockedClose": {
-      "description": "English: Close this window",
-      "message": "இந்த சாளரத்தை மூடவும்"
-   },
-   "docblockedDisablePermanent": {
-      "description": "English: Permanently",
-      "message": "நிரந்தரமாக"
-   },
-   "docblockedDisableTemporary": {
-      "description": "English: Temporarily",
-      "message": "தற்காலிகமாக"
-   },
-   "docblockedFoundIn": {
-      "description": "English: List of filter list names follows",
-      "message": "இதனுள் கண்டறியப்பட்டது:"
-   },
-   "docblockedNoParamsPrompt": {
-      "description": "label to be used for the parameter-less URL: https://cloud.githubusercontent.com/assets/585534/9832014/bfb1b8f0-593b-11e5-8a27-fba472a5529a.png",
-      "message": "உரலியில் அளவுருக்கள் இல்லாமல்"
-   },
-   "docblockedProceed": {
-      "description": "English: Disable strict blocking for {{hostname}} ...",
-      "message": "{{hostname}}-இல் கண்டிப்பான தடையைச்‌ செயலிழக்கச் செய்"
-   },
-   "docblockedPrompt1": {
-      "description": "English: uBlock₀ has prevented the following page from loading:",
-      "message": "uBlock Origin பின்வரும் பக்கத்தை ஏற்றுவதில் இருந்து தடுத்தது:"
-   },
-   "docblockedPrompt2": {
-      "description": "English: Because of the following filter",
-      "message": "ஏனெனில் பின்வரும் வடிகட்டி"
-   },
-   "dummy": {
-      "description": "so we dont need to deal with comma for last entry",
-      "message": "This entry must be the last one"
-   },
-   "elapsedManyDaysAgo": {
-      "description": "English: {{value}} days ago",
-      "message": "{{value}} நாள் முன்பு"
-   },
-   "elapsedManyHoursAgo": {
-      "description": "English: {{value}} hours ago",
-      "message": "{{value}} மணி நேரம் முன்பு"
-   },
-   "elapsedManyMinutesAgo": {
-      "description": "English: {{value}} minutes ago",
-      "message": "{{value}} நிமிடம் முன்பு"
-   },
-   "elapsedOneDayAgo": {
-      "description": "English: a day ago",
-      "message": "ஒரு நாள் முன்பு"
-   },
-   "elapsedOneHourAgo": {
-      "description": "English: an hour ago",
-      "message": "ஒரு மணி நேரம் முன்பு"
-   },
-   "elapsedOneMinuteAgo": {
-      "description": "English: a minute ago",
-      "message": "ஒரு நிமிடம் முன்பு"
-   },
-   "errorCantConnectTo": {
-      "description": "English: Network error: {{msg}}",
-      "message": "பிணையத்தில் பிழை: {{msg}}"
-   },
-   "extName": {
-      "description": "extension name.",
-      "message": "uBlock Origin"
-   },
-   "extShortDesc": {
-      "description": "this will be in the Chrome web store: must be 132 characters or less",
-      "message": "இறுதியாக, ஒரு திறமையான விளம்பரத் தடுப்பான். கணினியின் மையச் செயற்பகுதியின் மேலும் நினைவகத்தின் மேலும் இலகுவானது."
-   },
-   "fennecMenuItemBlockingOff": {
-      "description": "Firefox-specific: appears as 'uBlock₀ (off)'",
-      "message": "அணைந்து விட்டது"
-   },
-   "genericApplyChanges": {
-      "description": "for generic 'Apply changes' buttons",
-      "message": "மாற்றங்களைச் செயல்படுத்து"
-   },
-   "genericBytes": {
-      "description": "",
-      "message": "பைட்டுகள்"
-   },
-   "genericCopyToClipboard": {
-      "description": "Label for buttons used to copy something to the clipboard",
-      "message": "இடைநிலைப் பலகைக்கு நகலெடுக்கவும்"
-   },
-   "genericMergeViewScrollLock": {
-      "description": "Tooltip for the button used to lock scrolling between the views in the 'My rules' pane",
-      "message": "ஸ்க்ரோலிங் பூட்டு மாற்று"
-   },
-   "genericRevert": {
-      "description": "for generic 'Revert' buttons",
-      "message": "முன்நிலையாக்கு"
-   },
-   "genericSubmit": {
-      "description": "for generic 'Submit' buttons",
-      "message": "சமர்ப்பி"
-   },
-   "logAll": {
-      "description": "Appears in the logger's tab selector",
-      "message": "அனைத்தும்"
-   },
-   "logBehindTheScene": {
-      "description": "Pretty name for behind-the-scene network requests",
-      "message": "இ.தளங்களின் பின்னால் நடப்பவை"
-   },
-   "logFilterPrompt": {
-      "description": "Placeholder string for logger output filtering input field",
-      "message": "பதிகை உருப்படிகளை வடிகட்டு"
-   },
-   "logRequestsHeaderDomain": {
-      "description": "English: Domain",
-      "message": "ஆள்களம்"
-   },
-   "logRequestsHeaderFilter": {
-      "description": "English: Filter",
-      "message": "வடிகட்டு"
-   },
-   "logRequestsHeaderType": {
-      "description": "English: Type",
-      "message": "வகை"
-   },
-   "logRequestsHeaderURL": {
-      "description": "English: URL",
-      "message": "உரலி"
-   },
-   "loggerClearTip": {
-      "description": "Tooltip for the eraser in the logger page; used to blank the content of the logger",
-      "message": "Clear logger"
-   },
-   "loggerCurrentTab": {
-      "description": "Appears in the logger's tab selector",
-      "message": "Current tab"
-   },
-   "loggerDomInspectorTip": {
-      "description": "Tooltip for the DOM inspector button in the logger page",
-      "message": "Toggle the DOM inspector"
-   },
-   "loggerEntryDetailsContext": {
-      "description": "Label to identify a context field (typically a hostname)",
-      "message": "Context"
-   },
-   "loggerEntryDetailsFilter": {
-      "description": "Label to identify a filter field",
-      "message": "வடிகட்டி"
-   },
-   "loggerEntryDetailsFilterList": {
-      "description": "Label to identify a filter list field",
-      "message": "Filter list"
-   },
-   "loggerEntryDetailsHeader": {
-      "description": "Small header to identify the 'Details' pane for a specific logger entry",
-      "message": "விவரங்கள்"
-   },
-   "loggerEntryDetailsPartyness": {
-      "description": "Label to identify a field providing partyness information",
-      "message": "Partyness"
-   },
-   "loggerEntryDetailsRootContext": {
-      "description": "Label to identify a root context field (typically a hostname)",
-      "message": "வேர் சூழல்"
-   },
-   "loggerEntryDetailsRule": {
-      "description": "Label to identify a rule field",
-      "message": "Rule"
-   },
-   "loggerEntryDetailsType": {
-      "description": "Label to identify the type of an entry",
-      "message": "வகை"
-   },
-   "loggerEntryDetailsURL": {
-      "description": "Label to identify the URL of an entry",
-      "message": "இணைய முகவரி"
-   },
-   "loggerExportEncodeMarkdown": {
-      "description": "Label for radio-button to pick export text format",
-      "message": "Markdown"
-   },
-   "loggerExportEncodePlain": {
-      "description": "Label for radio-button to pick export text format",
-      "message": "வெற்று"
-   },
-   "loggerExportFormatList": {
-      "description": "Label for radio-button to pick export format",
-      "message": "பட்டியல்"
-   },
-   "loggerExportFormatTable": {
-      "description": "Label for radio-button to pick export format",
-      "message": "பொருளடக்கம்"
-   },
-   "loggerInfoTip": {
-      "description": "Tooltip for the top-right info label in the logger page",
-      "message": "uBlock Origin wiki: The logger"
-   },
-   "loggerPauseTip": {
-      "description": "Tooltip for the pause button in the logger page",
-      "message": "Pause logger (discard all incoming data)"
-   },
-   "loggerPopupPanelTip": {
-      "description": "Tooltip for the popup panel button in the logger page",
-      "message": "Toggle the popup panel"
-   },
-   "loggerReloadTip": {
-      "description": "Tooltip for the reload button in the logger page",
-      "message": "Reload the tab content"
-   },
-   "loggerRowFiltererBuiltin1p": {
-      "description": "A keyword in the built-in row filtering expression",
-      "message": "1st-party"
-   },
-   "loggerRowFiltererBuiltin3p": {
-      "description": "A keyword in the built-in row filtering expression",
-      "message": "மூன்றாம் தரப்பு"
-   },
-   "loggerRowFiltererBuiltinAllowed": {
-      "description": "A keyword in the built-in row filtering expression",
-      "message": "allowed"
-   },
-   "loggerRowFiltererBuiltinBlocked": {
-      "description": "A keyword in the built-in row filtering expression",
-      "message": "blocked"
-   },
-   "loggerRowFiltererBuiltinEventful": {
-      "description": "A keyword in the built-in row filtering expression: all items corresponding to uBO doing something (blocked, allowed, redirected, etc.)",
-      "message": "eventful"
-   },
-   "loggerRowFiltererBuiltinNot": {
-      "description": "A keyword in the built-in row filtering expression",
-      "message": "Not"
-   },
-   "loggerRowFiltererBuiltinTip": {
-      "description": "Tooltip for the button to bring up logger output filtering options",
-      "message": "Logger filtering options"
-   },
-   "loggerRowFiltererButtonTip": {
-      "description": "Tooltip for the row filterer button in the logger page",
-      "message": "Toggle logger filtering"
-   },
-   "loggerSettingDiscardPrompt": {
-      "description": "Logger setting: A sentence to describe the purpose of the settings below",
-      "message": "Logger entries which do not fulfill all three conditions below will be automatically discarded:"
-   },
-   "loggerSettingHideColumnContext": {
-      "description": "A label for the context column",
-      "message": "{{input}} சூழல்"
-   },
-   "loggerSettingHideColumnFilter": {
-      "description": "A label for the filter or rule column",
-      "message": "{{input}} வடிகட்டி/சட்டம்"
-   },
-   "loggerSettingHideColumnPartyness": {
-      "description": "A label for the partyness column",
-      "message": "{{input}} Partyness"
-   },
-   "loggerSettingHideColumnTime": {
-      "description": "A label for the time column",
-      "message": "{{input}} நேரம்"
-   },
-   "loggerSettingHideColumnsPrompt": {
-      "description": "Logger settings: a sentence to describe the purpose of the checkboxes below",
-      "message": "நெடுவரிசைகளை மறை:"
-   },
-   "loggerSettingPerEntryLineCount": {
-      "description": "A logger setting",
-      "message": "Use {{input}} lines per entry in vertically expanded mode"
-   },
-   "loggerSettingPerEntryMaxAge": {
-      "description": "A logger setting",
-      "message": "Preserve entries from the last {{input}} minutes"
-   },
-   "loggerSettingPerTabMaxEntries": {
-      "description": "A logger setting",
-      "message": "Preserve at most {{input}} entries per tab"
-   },
-   "loggerSettingPerTabMaxLoads": {
-      "description": "A logger setting",
-      "message": "Preserve at most {{input}} page loads per tab"
-   },
-   "loggerStaticFilteringFinderSentence1": {
-      "description": "Below this sentence, the filter list(s) in which the filter was found",
-      "message": "Static filter \u003Ccode>{{filter}}\u003C/code> found in:"
-   },
-   "loggerStaticFilteringFinderSentence2": {
-      "description": "Message to show when a filter cannot be found in any filter lists",
-      "message": "Static filter could not be found in any of the currently enabled filter lists"
-   },
-   "loggerStaticFilteringHeader": {
-      "description": "Small header to identify the static filtering section",
-      "message": "நிலையான வடிகட்டுதல்"
-   },
-   "loggerStaticFilteringSentence": {
-      "description": "Used in the static filtering wizard",
-      "message": "{{origin}} தொடங்கும், {{br}}{{url}}-குப் பொருந்தும் முகவரி கொண்ட{{br}}{{type}} பிணையக் கோரிக்கைகளை {{action}},{{br}}பொருந்தும் விதிவிலக்கு வடிகட்டி {{importance}}."
-   },
-   "loggerStaticFilteringSentencePartAllow": {
-      "description": "Used in the static filtering wizard",
-      "message": "அனுமதி"
-   },
-   "loggerStaticFilteringSentencePartAnyOrigin": {
-      "description": "Used in the static filtering wizard",
-      "message": "எங்கிருந்தும்"
-   },
-   "loggerStaticFilteringSentencePartAnyType": {
-      "description": "Used in the static filtering wizard",
-      "message": "எந்த வகையும்"
-   },
-   "loggerStaticFilteringSentencePartBlock": {
-      "description": "Used in the static filtering wizard",
-      "message": "முடக்கு"
-   },
-   "loggerStaticFilteringSentencePartImportant": {
-      "description": "Used in the static filtering wizard",
-      "message": "இருந்தாலும் கூட‌"
-   },
-   "loggerStaticFilteringSentencePartNotImportant": {
-      "description": "Used in the static filtering wizard",
-      "message": "இல்லாவிட்டால் மட்டும்"
-   },
-   "loggerStaticFilteringSentencePartOrigin": {
-      "description": "Used in the static filtering wizard",
-      "message": "“{{origin}}”-இல் இருந்து"
-   },
-   "loggerStaticFilteringSentencePartType": {
-      "description": "Used in the static filtering wizard",
-      "message": "\"{{type}}\" வகை"
-   },
-   "loggerURLFilteringContextLabel": {
-      "description": "Label for the context selector",
-      "message": "சூழல்:"
-   },
-   "loggerURLFilteringHeader": {
-      "description": "Small header to identify the dynamic URL filtering section",
-      "message": "மாறுநிலை உரலி வடிகட்டல்"
-   },
-   "loggerURLFilteringTypeLabel": {
-      "description": "Label for the type selector",
-      "message": "வகை:"
-   },
-   "loggerUnpauseTip": {
-      "description": "Tooltip for the play button in the logger page",
-      "message": "Unpause logger"
-   },
-   "pickerContextMenuEntry": {
-      "description": "An entry in the browser's contextual menu",
-      "message": "உறுப்பை தடு"
-   },
-   "pickerCosmeticFilters": {
-      "description": "English: Cosmetic filters",
-      "message": "ஒப்பனை வடிகட்டி"
-   },
-   "pickerCosmeticFiltersHint": {
-      "description": "English: Click, Ctrl-click",
-      "message": "சொடுக்கு, Ctrl-சொடுக்கு"
-   },
-   "pickerCreate": {
-      "description": "English: Create",
-      "message": "உருவாக்கு"
-   },
-   "pickerNetFilters": {
-      "description": "English: header for a type of filter in the element picker dialog",
-      "message": "இணைய வடிகட்டிகள்"
-   },
-   "pickerPick": {
-      "description": "English: Pick",
-      "message": "எடு"
-   },
-   "pickerPreview": {
-      "description": "Element picker preview mode: will cause the elements matching the current filter to be removed from the page",
-      "message": "முன்னோட்டம்"
-   },
-   "pickerQuit": {
-      "description": "English: Quit",
-      "message": "முற்றிலும் வெளியேறு"
-   },
-   "popup1pScriptRulePrompt": {
-      "description": "",
-      "message": "1‍-ஆம் தரப்பு உரைகள்"
-   },
-   "popup3pAnyRulePrompt": {
-      "description": "",
-      "message": "மூன்றாம் தரப்பு"
-   },
-   "popup3pFrameRulePrompt": {
-      "description": "",
-      "message": "மூன்றாம் தரப்பு  சட்டங்கள்"
-   },
-   "popup3pPassiveRulePrompt": {
-      "description": "",
-      "message": "மூன்றாம் தரப்பு CSS/படங்கள்"
-   },
-   "popup3pScriptRulePrompt": {
-      "description": "",
-      "message": "மூன்றாம் தரப்பு உரைகள்"
-   },
-   "popupAnyRulePrompt": {
-      "description": "",
-      "message": "அனைத்தும்"
-   },
-   "popupBlockedOnThisPagePrompt": {
-      "description": "English: on this page",
-      "message": "இந்த இணையப் பக்கத்தில்"
-   },
-   "popupBlockedOnThisPage_v2": {
-      "description": "For the new mobile-friendly popup design",
-      "message": "Blocked on this page"
-   },
-   "popupBlockedRequestPrompt": {
-      "description": "English: requests blocked",
-      "message": "தடுக்கப்பட்ட கோரிக்கைகள்"
-   },
-   "popupBlockedSinceInstallPrompt": {
-      "description": "English: since install",
-      "message": "நிறுவியது முதல்"
-   },
-   "popupBlockedSinceInstall_v2": {
-      "description": "For the new mobile-friendly popup design",
-      "message": "Blocked since install"
-   },
-   "popupBlockedStats": {
-      "description": "Example: 15 or 13%",
-      "message": "{{count}} அல்லது {{percent}}%"
-   },
-   "popupDomainsConnected_v2": {
-      "description": "For the new mobile-friendly popup design",
-      "message": "Domains connected"
-   },
-   "popupHitDomainCount": {
-      "description": "appears in popup",
-      "message": "மொத்தம் {{total}} இல் {{count}}"
-   },
-   "popupHitDomainCountPrompt": {
-      "description": "appears in popup",
-      "message": "ஆள்களங்கள் இணைக்கப்பட்டுள்ளது"
-   },
-   "popupImageRulePrompt": {
-      "description": "",
-      "message": "படங்கள்"
-   },
-   "popupInlineScriptRulePrompt": {
-      "description": "",
-      "message": "உள்வரி உரைகள்"
-   },
-   "popupMoreButton_v2": {
-      "description": "Label to be used to toggle overview panel",
-      "message": "More"
-   },
-   "popupNoCosmeticFiltering_v2": {
-      "description": "Tip for the no-cosmetic-filtering per-site switch",
-      "message": "Cosmetic filtering"
-   },
-   "popupNoLargeMedia_v2": {
-      "description": "Tip for the no-large-media per-site switch",
-      "message": "Large media elements"
-   },
-   "popupNoRemoteFonts_v2": {
-      "description": "Tip for the no-remote-fonts per-site switch",
-      "message": "Remote fonts"
-   },
-   "popupNoScripting_v2": {
-      "description": "Tip for the no-scripting per-site switch",
-      "message": "JavaScript"
-   },
-   "popupOr": {
-      "description": "English: or",
-      "message": "அல்லது"
-   },
-   "popupPowerSwitchInfo": {
-      "description": "English: Click: disable/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page.",
-      "message": "இந்த தளத்தில் ‍‍‍uBlock₀ ஐ முடக்கவோ/இயக்கவோ: இங்கே சுட்டு.\nCtrl+click: என்ற குறுக்குவிசையின் மூலம் uBlock₀ ஐ இந்தப் பக்கத்தில் மட்டும் முடக்கு."
-   },
-   "popupPowerSwitchInfo1": {
-      "description": "Message to be read by screen readers",
-      "message": "இந்த வலைத்தளத்திற்கு uBlock முடக்க, கிளிக் செய்யவும்.\n\nuBlockகை இந்த வலைத்தளத்திற்கு முடக்க Ctrl+click செய்யவும்."
-   },
-   "popupPowerSwitchInfo2": {
-      "description": "Message to be read by screen readers",
-      "message": "இந்த வலைத்தளத்திற்கு uBlockகை செயல்படுத்த கிளிக் செய்க."
-   },
-   "popupTipDashboard": {
-      "description": "English: Click to open the dashboard",
-      "message": "நிர்வாக மையத்தை திறக்க இங்கே சொடுக்கவும்"
-   },
-   "popupTipGlobalRules": {
-      "description": "Tooltip when hovering the top-most cell of the global-rules column.",
-      "message": "Global rules: this column is for rules which apply to all sites."
-   },
-   "popupTipLocalRules": {
-      "description": "Tooltip when hovering the top-most cell of the local-rules column.",
-      "message": "Local rules: this column is for rules which apply to the current site only.\nLocal rules override global rules."
-   },
-   "popupTipLog": {
-      "description": "Tooltip used for the logger icon in the panel",
-      "message": "பிணையக் கோரிக்கைப் பதிவிற்கு செல்"
-   },
-   "popupTipNoCosmeticFiltering": {
-      "description": "Tooltip for the no-cosmetic-filtering per-site switch",
-      "message": "இத்தளத்திற்கான ஒப்பனை வடிகட்டியை மாற்றவும்"
-   },
-   "popupTipNoCosmeticFiltering1": {
-      "description": "Tooltip for the no-cosmetic-filtering per-site switch",
-      "message": "Click to disable cosmetic filtering on this site"
-   },
-   "popupTipNoCosmeticFiltering2": {
-      "description": "Tooltip for the no-cosmetic-filtering per-site switch",
-      "message": "Click to enable cosmetic filtering on this site"
-   },
-   "popupTipNoLargeMedia": {
-      "description": "Tooltip for the no-large-media per-site switch",
-      "message": "Toggle the blocking of large media elements for this site"
-   },
-   "popupTipNoLargeMedia1": {
-      "description": "Tooltip for the no-large-media per-site switch",
-      "message": "Click to block large media elements on this site"
-   },
-   "popupTipNoLargeMedia2": {
-      "description": "Tooltip for the no-large-media per-site switch",
-      "message": "Click to no longer block large media elements on this site"
-   },
-   "popupTipNoPopups": {
-      "description": "Tooltip for the no-popups per-site switch",
-      "message": "இத்தளத்தில் அனைத்து மேல்விரிகளையும் தடுப்பதை மாற்றவும்"
-   },
-   "popupTipNoPopups1": {
-      "description": "Tooltip for the no-popups per-site switch",
-      "message": "Click to block all popups on this site"
-   },
-   "popupTipNoPopups2": {
-      "description": "Tooltip for the no-popups per-site switch",
-      "message": "Click to no longer block all popups on this site"
-   },
-   "popupTipNoRemoteFonts": {
-      "description": "Tooltip for the no-remote-fonts per-site switch",
-      "message": "இத்தளத்திற்கான தொலைநிலை எழுத்துருக்கள் தடையை மாற்றவும்"
-   },
-   "popupTipNoRemoteFonts1": {
-      "description": "Tooltip for the no-remote-fonts per-site switch",
-      "message": "Click to block remote fonts on this site"
-   },
-   "popupTipNoRemoteFonts2": {
-      "description": "Tooltip for the no-remote-fonts per-site switch",
-      "message": "Click to no longer block remote fonts on this site"
-   },
-   "popupTipNoScripting1": {
-      "description": "Tooltip for the no-scripting per-site switch",
-      "message": "Click to disable JavaScript on this site"
-   },
-   "popupTipNoScripting2": {
-      "description": "Tooltip for the no-scripting per-site switch",
-      "message": "Click to no longer disable JavaScript on this site"
-   },
-   "popupTipPicker": {
-      "description": "English: Enter element picker mode",
-      "message": "உறுப்புத் தெரிவு முறைமைக்குச் செல்லவும்"
-   },
-   "popupTipRevertRules": {
-      "description": "Tooltip when hovering over the eraser in the dynamic filtering pane.",
-      "message": "இங்கே சுட்டி உங்கள் மாற்றங்களைப் பழைய நிலைக்குத் திருப்பவும்."
-   },
-   "popupTipSaveRules": {
-      "description": "Tooltip when hovering over the padlock in the dynamic filtering pane.",
-      "message": "இங்கே சுட்டி உங்கள் மாற்றங்களை நிரந்தரமாக்கவும்."
-   },
-   "popupTipZapper": {
-      "description": "Tooltip for the element-zapper icon in the popup panel",
-      "message": "பகுதி தெரிவு முறைமை உள்ளிடவும்"
-   },
-   "relaxBlockingMode": {
-      "description": "Label for keyboard shortcut used to relax blocking mode (meant to replace 'Toggle blocking profile')",
-      "message": "Relax blocking mode"
-   },
-   "rulesCommit": {
-      "description": "This will persist temporary rules",
-      "message": "உறுதியளி"
-   },
-   "rulesDefaultFileName": {
-      "description": "default file name to use",
-      "message": "my-ublock-dynamic-rules_{{datetime}}.txt"
-   },
-   "rulesEdit": {
-      "description": "Will enable manual-edit mode (textarea)",
-      "message": "தொகு"
-   },
-   "rulesEditDiscard": {
-      "description": "Will discard manually-edited content and exit manual-edit mode",
-      "message": "நிராகரி"
-   },
-   "rulesEditSave": {
-      "description": "Will save manually-edited content and exit manual-edit mode",
-      "message": "சேமி"
-   },
-   "rulesExport": {
-      "description": "",
-      "message": "கோப்பினுள் ஏற்று"
-   },
-   "rulesFormatHint": {
-      "description": "English: dynamic rule syntax and full documentation.",
-      "message": "Rule syntax: \u003Ccode>source destination type action\u003C/code> (\u003Ca href='https://github.com/gorhill/uBlock/wiki/Dynamic-filtering:-rule-syntax'>full documentation\u003C/a>)."
-   },
-   "rulesHint": {
-      "description": "English: List of your dynamic filtering rules.",
-      "message": "உங்களுடைய மாறுநிலை வடிகட்டி விதிப் பட்டியல்கள்."
-   },
-   "rulesImport": {
-      "description": "",
-      "message": "கோப்பிலிருந்து இறக்குமதி செய் ..."
-   },
-   "rulesPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "என் விதிமுறைகள்"
-   },
-   "rulesPermanentHeader": {
-      "description": "header",
-      "message": "நிரந்தரமான விதிகள்"
-   },
-   "rulesRevert": {
-      "description": "This will remove all temporary rules",
-      "message": "முன்நிலையாக்கு"
-   },
-   "rulesTemporaryHeader": {
-      "description": "header",
-      "message": "தற்காலிக விதிகள்"
-   },
-   "settingPerSiteSwitchGroup": {
-      "description": "",
-      "message": "இயல்பான நடத்தை"
-   },
-   "settingPerSiteSwitchGroupSynopsis": {
-      "description": "",
-      "message": "These default behaviors can be overridden on a per-site basis"
-   },
-   "settingsAdvancedUserPrompt": {
-      "description": "",
-      "message": "நான் ஒரு மேம்பட்ட பயனர் (\u003Ca href='https://github.com/gorhill/uBlock/wiki/Advanced-user-features'>அவசியம் படிக்க வேண்டியவை\u003C/a>)"
-   },
-   "settingsAdvancedUserSettings": {
-      "description": "For the tooltip of a link which gives access to advanced settings",
-      "message": "advanced settings"
-   },
-   "settingsCloudStorageEnabledPrompt": {
-      "description": "",
-      "message": "கிளவுட் சேமிப்பு ஆதரவு இயக்கு"
-   },
-   "settingsCollapseBlockedPrompt": {
-      "description": "English: Hide placeholders of blocked elements",
-      "message": "தடுக்கப்பட்ட உறுப்புகளின் பெட்டிகளை மறை"
-   },
-   "settingsColorBlindPrompt": {
-      "description": "English: Color-blind friendly",
-      "message": "நிறம்-அறியாதோருக்கு ஏதுவாக"
-   },
-   "settingsContextMenuPrompt": {
-      "description": "English: Make use of context menu where appropriate",
-      "message": "தக்க இடங்களில் சூழல் பட்டியலைக் காட்டு"
-   },
-   "settingsHyperlinkAuditingDisabledPrompt": {
-      "description": "English: ",
-      "message": "உரலியிணைப்புத் தணிக்கையை முடக்கவும்"
-   },
-   "settingsIconBadgePrompt": {
-      "description": "English: Show the number of blocked requests on the icon",
-      "message": "தடுக்கப்பட்ட கோரிக்கைகளின் எண்ணிக்கையைப் பாவையில் காட்டவும்"
-   },
-   "settingsLastBackupPrompt": {
-      "description": "English: Last backup:",
-      "message": "கடைசி மறுபிரதி:"
-   },
-   "settingsLastRestorePrompt": {
-      "description": "English: Last restore:",
-      "message": "இறுதியாக மீட்பதற்கு:"
-   },
-   "settingsNoCSPReportsPrompt": {
-      "description": "background information: https://github.com/gorhill/uBlock/issues/3150",
-      "message": "Block CSP reports"
-   },
-   "settingsNoCosmeticFilteringPrompt": {
-      "description": "",
-      "message": "ஒப்பனை வடிகட்டியை தடை செய்"
-   },
-   "settingsNoLargeMediaPrompt": {
-      "description": "",
-      "message": "Block media elements larger than {{input}} KB"
-   },
-   "settingsNoRemoteFontsPrompt": {
-      "description": "",
-      "message": "தொலை எழுத்துருக்களை தடு"
-   },
-   "settingsNoScriptingPrompt": {
-      "description": "The default state for the per-site no-scripting switch",
-      "message": "Disable JavaScript"
-   },
-   "settingsPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "அமைப்புகள்"
-   },
-   "settingsPrefetchingDisabledPrompt": {
-      "description": "English: ",
-      "message": "Disable pre-fetching (to prevent any connection for blocked network requests)"
-   },
-   "settingsStorageUsed": {
-      "description": "English: Storage used: {{}} bytes",
-      "message": "பயன்படுத்தப்பட்ட சேமிப்பகத்தின் அளவு: {{value}} பைட்டுகள்"
-   },
-   "settingsTooltipsPrompt": {
-      "description": "A checkbox in the Settings pane",
-      "message": "உதவிக்குறிப்புக்களை முடக்கு"
-   },
-   "settingsWebRTCIPAddressHiddenPrompt": {
-      "description": "English: ",
-      "message": "உங்கள் தனிப்பட்ட IP முகவரியை WebRTC வெளிக்காட்டாதபடி தடுக்க"
-   },
-   "shortcutCapturePlaceholder": {
-      "description": "Placeholder string for input field used to capture a keyboard shortcut",
-      "message": "குறுக்குவழியைத் தட்டச்சு செய்க"
-   },
-   "shortcutsPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "குறுக்குவழிகள்"
-   },
-   "showDashboardButton": {
-      "description": "Firefox/Fennec-specific: Show Dashboard",
-      "message": "நிர்வாக மையத்தைக் காட்டுக"
-   },
-   "showNetworkLogButton": {
-      "description": "Firefox/Fennec-specific: Show Logger",
-      "message": "பதிவேட்டைக் காண்பிக்கவும்"
-   },
-   "statsPageName": {
-      "description": "Title for the logger window",
-      "message": "uBlock₀ — பிணையக் கோரிக்கைப் பதிகை"
-   },
-   "subscriberConfirm": {
-      "description": "English: The message seen by the user to confirm subscription to a ABP filter list",
-      "message": "uBlock₀: பின்வரும் உரலியை உங்களுடைய தனிபயன் வடிகட்டியில் சேர்க்கலாமா?\n\nதலைப்பு: \"{{title}}\"\nஉரலி: {{url}}"
-   },
-   "toggleBlockingProfile": {
-      "description": "Label for keyboard shortcut used to toggle blocking profile",
-      "message": "Toggle blocking profile"
-   },
-   "whitelistApply": {
-      "description": "English: Apply changes",
-      "message": "மாற்றங்களைச் செயல்படுத்து"
-   },
-   "whitelistExport": {
-      "description": "English: Export",
-      "message": "ஏற்று"
-   },
-   "whitelistExportFilename": {
-      "description": "English: my-ublock-whitelist_{{datetime}}.txt",
-      "message": "my-ublock-whitelist_{{datetime}}.txt"
-   },
-   "whitelistImport": {
-      "description": "English: Import and append",
-      "message": "Import and append"
-   },
-   "whitelistPageName": {
-      "description": "appears as tab name in dashboard",
-      "message": "அனுமதிப்பட்டியல்"
-   },
-   "whitelistPrompt": {
-      "description": "English: An overview of the content of the dashboard's Whitelist pane.",
-      "message": "எந்தெந்தப் பக்கங்களில் uBlock₀ முடக்கப்பட வேண்டுமென்பதை அனுமதிப்பட்ட கட்டளைகள் ஆணையிடுகின்றன. வரிக்கு ஒரு இடுகை மட்டுமே. தவறான கட்டளைகள் அமைதியாகப் புறக்கணிக்கப்படும்."
-   }
+  "extName": {
+    "message": "uBlock Origin",
+    "description": "extension name."
+  },
+  "extShortDesc": {
+    "message": "இறுதியாக, ஒரு திறமையான விளம்பரத் தடுப்பான். கணினியின் மையச் செயற்பகுதியின் மேலும் நினைவகத்தின் மேலும் இலகுவானது.",
+    "description": "this will be in the Chrome web store: must be 132 characters or less"
+  },
+  "dashboardName": {
+    "message": "uBlock₀ - நிர்வாக மையம்",
+    "description": "English: uBlock₀ — Dashboard"
+  },
+  "dashboardUnsavedWarning": {
+    "message": "எச்சரிக்கை! உங்களிடம் சேமிக்கப்படாத மாற்றங்கள் உள்ளன",
+    "description": "A warning in the dashboard when navigating away from unsaved changes"
+  },
+  "dashboardUnsavedWarningStay": {
+    "message": "இருங்கள்",
+    "description": "Label for button to prevent navigating away from unsaved changes"
+  },
+  "dashboardUnsavedWarningIgnore": {
+    "message": "பொருட்படுத்தாதே",
+    "description": "Label for button to ignore unsaved changes"
+  },
+  "settingsPageName": {
+    "message": "அமைப்புகள்",
+    "description": "appears as tab name in dashboard"
+  },
+  "3pPageName": {
+    "message": "மூன்றாம் தரப்பு வடிகட்டிகள்",
+    "description": "appears as tab name in dashboard"
+  },
+  "1pPageName": {
+    "message": "என் வடிகட்டிகள்",
+    "description": "appears as tab name in dashboard"
+  },
+  "rulesPageName": {
+    "message": "என் விதிமுறைகள்",
+    "description": "appears as tab name in dashboard"
+  },
+  "whitelistPageName": {
+    "message": "அனுமதிப்பட்டியல்",
+    "description": "appears as tab name in dashboard"
+  },
+  "shortcutsPageName": {
+    "message": "குறுக்குவழிகள்",
+    "description": "appears as tab name in dashboard"
+  },
+  "statsPageName": {
+    "message": "uBlock₀ — பிணையக் கோரிக்கைப் பதிகை",
+    "description": "Title for the logger window"
+  },
+  "aboutPageName": {
+    "message": "எம்மைப் பற்றி",
+    "description": "appears as tab name in dashboard"
+  },
+  "assetViewerPageName": {
+    "message": "uBlock -- உடைமை பார்வையாளர்",
+    "description": "Title for the asset viewer page"
+  },
+  "advancedSettingsPageName": {
+    "message": "மேம்பட்ட அமைப்புகள்",
+    "description": "Title for the advanced settings page"
+  },
+  "popupPowerSwitchInfo": {
+    "message": "இந்த தளத்தில் ‍‍‍uBlock₀ ஐ முடக்கவோ/இயக்கவோ: இங்கே சுட்டு.\nCtrl+click: என்ற குறுக்குவிசையின் மூலம் uBlock₀ ஐ இந்தப் பக்கத்தில் மட்டும் முடக்கு.",
+    "description": "English: Click: disable/enable uBlock₀ for this site.\n\nCtrl+click: disable uBlock₀ only on this page."
+  },
+  "popupPowerSwitchInfo1": {
+    "message": "இந்த வலைத்தளத்திற்கு uBlock முடக்க, கிளிக் செய்யவும்.\n\nuBlockகை இந்த வலைத்தளத்திற்கு முடக்க Ctrl+click செய்யவும்.",
+    "description": "Message to be read by screen readers"
+  },
+  "popupPowerSwitchInfo2": {
+    "message": "இந்த வலைத்தளத்திற்கு uBlockகை செயல்படுத்த கிளிக் செய்க.",
+    "description": "Message to be read by screen readers"
+  },
+  "popupBlockedRequestPrompt": {
+    "message": "தடுக்கப்பட்ட கோரிக்கைகள்",
+    "description": "English: requests blocked"
+  },
+  "popupBlockedOnThisPagePrompt": {
+    "message": "இந்த இணையப் பக்கத்தில்",
+    "description": "English: on this page"
+  },
+  "popupBlockedStats": {
+    "message": "{{count}} அல்லது {{percent}}%",
+    "description": "Example: 15 (13%)"
+  },
+  "popupBlockedSinceInstallPrompt": {
+    "message": "நிறுவியது முதல்",
+    "description": "English: since install"
+  },
+  "popupOr": {
+    "message": "அல்லது",
+    "description": "English: or"
+  },
+  "popupBlockedOnThisPage_v2": {
+    "message": "இந்த பக்கத்தில் தடுக்கப்பட்டது",
+    "description": "For the new mobile-friendly popup design"
+  },
+  "popupBlockedSinceInstall_v2": {
+    "message": "நிறுவியதிலிருந்து தடுக்கப்பட்டது",
+    "description": "For the new mobile-friendly popup design"
+  },
+  "popupDomainsConnected_v2": {
+    "message": "களங்கள் இணைக்கப்பட்டுள்ளன",
+    "description": "For the new mobile-friendly popup design"
+  },
+  "popupTipDashboard": {
+    "message": "நிர்வாக மையத்தை திறக்க இங்கே சொடுக்கவும்",
+    "description": "English: Click to open the dashboard"
+  },
+  "popupTipZapper": {
+    "message": "பகுதி தெரிவு முறைமை உள்ளிடவும்",
+    "description": "Tooltip for the element-zapper icon in the popup panel"
+  },
+  "popupTipPicker": {
+    "message": "உறுப்புத் தெரிவு முறைமைக்குச் செல்லவும்",
+    "description": "English: Enter element picker mode"
+  },
+  "popupTipLog": {
+    "message": "பிணையக் கோரிக்கைப் பதிவிற்கு செல்",
+    "description": "Tooltip used for the logger icon in the panel"
+  },
+  "popupTipNoPopups": {
+    "message": "இத்தளத்தில் அனைத்து மேல்விரிகளையும் தடுப்பதை மாற்றவும்",
+    "description": "Tooltip for the no-popups per-site switch"
+  },
+  "popupTipNoPopups1": {
+    "message": "இந்த தளத்தில் உள்ள அனைத்து பாப்அப்களையும் தடுக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-popups per-site switch"
+  },
+  "popupTipNoPopups2": {
+    "message": "இந்த தளத்தில் உள்ள அனைத்து பாப்அப்களையும் இனி தடுக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-popups per-site switch"
+  },
+  "popupTipNoLargeMedia": {
+    "message": "இந்த தளத்திற்கான பெரிய ஊடக கூறுகளைத் தடுப்பதை நிலைமாற்று",
+    "description": "Tooltip for the no-large-media per-site switch"
+  },
+  "popupTipNoLargeMedia1": {
+    "message": "இந்த தளத்தில் பெரிய ஊடக கூறுகளைத் தடுக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-large-media per-site switch"
+  },
+  "popupTipNoLargeMedia2": {
+    "message": "இந்த தளத்தில் பெரிய ஊடக கூறுகளை இனி தடுக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-large-media per-site switch"
+  },
+  "popupTipNoCosmeticFiltering": {
+    "message": "இத்தளத்திற்கான ஒப்பனை வடிகட்டியை மாற்றவும்",
+    "description": "Tooltip for the no-cosmetic-filtering per-site switch"
+  },
+  "popupTipNoCosmeticFiltering1": {
+    "message": "இந்த தளத்தில் ஒப்பனை வடிகட்டலை முடக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-cosmetic-filtering per-site switch"
+  },
+  "popupTipNoCosmeticFiltering2": {
+    "message": "இந்த தளத்தில் ஒப்பனை வடிகட்டலை இயக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-cosmetic-filtering per-site switch"
+  },
+  "popupTipNoRemoteFonts": {
+    "message": "இத்தளத்திற்கான தொலைநிலை எழுத்துருக்கள் தடையை மாற்றவும்",
+    "description": "Tooltip for the no-remote-fonts per-site switch"
+  },
+  "popupTipNoRemoteFonts1": {
+    "message": "இந்த தளத்தில் தொலை எழுத்துருக்களைத் தடுக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-remote-fonts per-site switch"
+  },
+  "popupTipNoRemoteFonts2": {
+    "message": "இந்த தளத்தில் தொலை எழுத்துருக்களை இனி தடுக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-remote-fonts per-site switch"
+  },
+  "popupTipNoScripting1": {
+    "message": "இந்த தளத்தில் ஜாவாஸ்கிரிப்டை முடக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-scripting per-site switch"
+  },
+  "popupTipNoScripting2": {
+    "message": "இந்த தளத்தில் ஜாவாஸ்கிரிப்டை இனி முடக்க கிளிக் செய்க",
+    "description": "Tooltip for the no-scripting per-site switch"
+  },
+  "popupNoPopups_v2": {
+    "message": "பாப்-அப் சாளரங்கள்",
+    "description": "Caption for the no-popups per-site switch"
+  },
+  "popupNoLargeMedia_v2": {
+    "message": "பெரிய ஊடக கூறுகள்",
+    "description": "Caption for the no-large-media per-site switch"
+  },
+  "popupNoCosmeticFiltering_v2": {
+    "message": "ஒப்பனை வடிகட்டுதல்",
+    "description": "Caption for the no-cosmetic-filtering per-site switch"
+  },
+  "popupNoRemoteFonts_v2": {
+    "message": "தொலை எழுத்துருக்கள்",
+    "description": "Caption for the no-remote-fonts per-site switch"
+  },
+  "popupNoScripting_v2": {
+    "message": "ஜாவாஸ்கிரிப்ட்",
+    "description": "Caption for the no-scripting per-site switch"
+  },
+  "popupMoreButton_v2": {
+    "message": "மேலும்",
+    "description": "Label to be used to show popup panel sections"
+  },
+  "popupLessButton_v2": {
+    "message": "குறைந்து",
+    "description": "Label to be used to hide popup panel sections"
+  },
+  "popupTipGlobalRules": {
+    "message": "உலகளாவிய விதிகள்: இந்த நெடுவரிசை அனைத்து தளங்களுக்கும் பொருந்தும் விதிகளுக்கானது.",
+    "description": "Tooltip when hovering the top-most cell of the global-rules column."
+  },
+  "popupTipLocalRules": {
+    "message": "உள்ளூர் விதிகள்: இந்த நெடுவரிசை தற்போதைய தளத்திற்கு மட்டுமே பொருந்தும் விதிகளுக்கானது.உள்ளூர் விதிகள் உலகளாவிய விதிகளை மீறுகின்றன.",
+    "description": "Tooltip when hovering the top-most cell of the local-rules column."
+  },
+  "popupTipSaveRules": {
+    "message": "இங்கே சுட்டி உங்கள் மாற்றங்களை நிரந்தரமாக்கவும்.",
+    "description": "Tooltip when hovering over the padlock in the dynamic filtering pane."
+  },
+  "popupTipRevertRules": {
+    "message": "இங்கே சுட்டி உங்கள் மாற்றங்களைப் பழைய நிலைக்குத் திருப்பவும்.",
+    "description": "Tooltip when hovering over the eraser in the dynamic filtering pane."
+  },
+  "popupAnyRulePrompt": {
+    "message": "அனைத்தும்",
+    "description": ""
+  },
+  "popupImageRulePrompt": {
+    "message": "படங்கள்",
+    "description": ""
+  },
+  "popup3pAnyRulePrompt": {
+    "message": "மூன்றாம் தரப்பு",
+    "description": ""
+  },
+  "popup3pPassiveRulePrompt": {
+    "message": "மூன்றாம் தரப்பு CSS/படங்கள்",
+    "description": ""
+  },
+  "popupInlineScriptRulePrompt": {
+    "message": "உள்வரி உரைகள்",
+    "description": ""
+  },
+  "popup1pScriptRulePrompt": {
+    "message": "1‍-ஆம் தரப்பு உரைகள்",
+    "description": ""
+  },
+  "popup3pScriptRulePrompt": {
+    "message": "மூன்றாம் தரப்பு உரைகள்",
+    "description": ""
+  },
+  "popup3pFrameRulePrompt": {
+    "message": "மூன்றாம் தரப்பு  சட்டங்கள்",
+    "description": ""
+  },
+  "popupHitDomainCountPrompt": {
+    "message": "ஆள்களங்கள் இணைக்கப்பட்டுள்ளது",
+    "description": "appears in popup"
+  },
+  "popupHitDomainCount": {
+    "message": "மொத்தம் {{total}} இல் {{count}}",
+    "description": "appears in popup"
+  },
+  "popupVersion": {
+    "message": "பதிப்பு",
+    "description": "Example of use: Version 1.26.4"
+  },
+  "popup3pScriptFilterTip": {
+    "message": "↑: 3 வது-கட்சி ஸ்கிரிப்டுகளைக் கொண்ட வரிசைகளை வலியுறுத்துக",
+    "description": "Tooltip shown when hovering small filtering widget in '3rd-party scripts' cell"
+  },
+  "popup3pFrameFilterTip": {
+    "message": "↑: 3 வது கட்சி பிரேம்கள் கொண்டிருக்கும் வரிசைகளை வலியுறுத்துகின்றன",
+    "description": "Tooltip shown when hovering small filtering widget in '3rd-party frames' cell"
+  },
+  "pickerCreate": {
+    "message": "உருவாக்கு",
+    "description": "English: Create"
+  },
+  "pickerPick": {
+    "message": "எடு",
+    "description": "English: Pick"
+  },
+  "pickerQuit": {
+    "message": "முற்றிலும் வெளியேறு",
+    "description": "English: Quit"
+  },
+  "pickerPreview": {
+    "message": "முன்னோட்டம்",
+    "description": "Element picker preview mode: will cause the elements matching the current filter to be removed from the page"
+  },
+  "pickerNetFilters": {
+    "message": "இணைய வடிகட்டிகள்",
+    "description": "English: header for a type of filter in the element picker dialog"
+  },
+  "pickerCosmeticFilters": {
+    "message": "ஒப்பனை வடிகட்டி",
+    "description": "English: Cosmetic filters"
+  },
+  "pickerCosmeticFiltersHint": {
+    "message": "சொடுக்கு, Ctrl-சொடுக்கு",
+    "description": "English: Click, Ctrl-click"
+  },
+  "pickerContextMenuEntry": {
+    "message": "உறுப்பை தடு",
+    "description": "An entry in the browser's contextual menu"
+  },
+  "settingsCollapseBlockedPrompt": {
+    "message": "தடுக்கப்பட்ட உறுப்புகளின் பெட்டிகளை மறை",
+    "description": "English: Hide placeholders of blocked elements"
+  },
+  "settingsIconBadgePrompt": {
+    "message": "தடுக்கப்பட்ட கோரிக்கைகளின் எண்ணிக்கையைப் பாவையில் காட்டவும்",
+    "description": "English: Show the number of blocked requests on the icon"
+  },
+  "settingsTooltipsPrompt": {
+    "message": "உதவிக்குறிப்புக்களை முடக்கு",
+    "description": "A checkbox in the Settings pane"
+  },
+  "settingsContextMenuPrompt": {
+    "message": "தக்க இடங்களில் சூழல் பட்டியலைக் காட்டு",
+    "description": "English: Make use of context menu where appropriate"
+  },
+  "settingsColorBlindPrompt": {
+    "message": "நிறம்-அறியாதோருக்கு ஏதுவாக",
+    "description": "English: Color-blind friendly"
+  },
+  "settingsCloudStorageEnabledPrompt": {
+    "message": "கிளவுட் சேமிப்பு ஆதரவு இயக்கு",
+    "description": ""
+  },
+  "settingsAdvancedUserPrompt": {
+    "message": "நான் ஒரு மேம்பட்ட பயனர் (<a href='https://github.com/gorhill/uBlock/wiki/Advanced-user-features'>அவசியம் படிக்க வேண்டியவை</a>)",
+    "description": ""
+  },
+  "settingsAdvancedUserSettings": {
+    "message": "மேம்பட்ட அமைப்புகள்",
+    "description": "For the tooltip of a link which gives access to advanced settings"
+  },
+  "settingsPrefetchingDisabledPrompt": {
+    "message": "முன்கூட்டியே பெறுவதை முடக்கு (தடுக்கப்பட்ட பிணைய கோரிக்கைகளுக்கான எந்தவொரு தொடர்பையும் தடுக்க)",
+    "description": "English: "
+  },
+  "settingsHyperlinkAuditingDisabledPrompt": {
+    "message": "உரலியிணைப்புத் தணிக்கையை முடக்கவும்",
+    "description": "English: "
+  },
+  "settingsWebRTCIPAddressHiddenPrompt": {
+    "message": "உங்கள் தனிப்பட்ட IP முகவரியை WebRTC வெளிக்காட்டாதபடி தடுக்க",
+    "description": "English: "
+  },
+  "settingPerSiteSwitchGroup": {
+    "message": "இயல்பான நடத்தை",
+    "description": ""
+  },
+  "settingPerSiteSwitchGroupSynopsis": {
+    "message": "இந்த இயல்புநிலை நடத்தைகள் ஒரு தள அடிப்படையில் மீறப்படலாம்",
+    "description": ""
+  },
+  "settingsNoCosmeticFilteringPrompt": {
+    "message": "ஒப்பனை வடிகட்டியை தடை செய்",
+    "description": ""
+  },
+  "settingsNoLargeMediaPrompt": {
+    "message": "Elements {உள்ளீடு}} KB ஐ விட பெரிய ஊடக உறுப்புகளைத் தடு",
+    "description": ""
+  },
+  "settingsNoRemoteFontsPrompt": {
+    "message": "தொலை எழுத்துருக்களை தடு",
+    "description": ""
+  },
+  "settingsNoScriptingPrompt": {
+    "message": "ஜாவாஸ்கிரிப்டை முடக்கு",
+    "description": "The default state for the per-site no-scripting switch"
+  },
+  "settingsNoCSPReportsPrompt": {
+    "message": "CSP அறிக்கைகளைத் தடு",
+    "description": "background information: https://github.com/gorhill/uBlock/issues/3150"
+  },
+  "settingsUncloakCnamePrompt": {
+    "message": "நியமன பெயர்களை அவிழ்த்து விடுங்கள்",
+    "description": "background information: https://github.com/uBlockOrigin/uBlock-issues/issues/1513"
+  },
+  "settingsLastRestorePrompt": {
+    "message": "இறுதியாக மீட்பதற்கு:",
+    "description": "English: Last restore:"
+  },
+  "settingsLastBackupPrompt": {
+    "message": "கடைசி மறுபிரதி:",
+    "description": "English: Last backup:"
+  },
+  "3pListsOfBlockedHostsPrompt": {
+    "message": "{{netFilterCount}} பிணைய வடிகட்டிகள் + {{cosmeticFilterCount}} ஒப்பனை வடிகட்டிகளிலிருந்து:",
+    "description": "Appears at the top of the _3rd-party filters_ pane"
+  },
+  "3pListsOfBlockedHostsPerListStats": {
+    "message": "மொத்தம் {{total}} இல் {{used}} பயன்படுத்தப்பட்டது",
+    "description": "Appears aside each filter list in the _3rd-party filters_ pane"
+  },
+  "3pAutoUpdatePrompt1": {
+    "message": "வடிகட்டி பட்டியல்களை தானாக புதுப்பி.",
+    "description": "A checkbox in the _3rd-party filters_ pane"
+  },
+  "3pUpdateNow": {
+    "message": "இப்போது புதுப்பிக்கவும்",
+    "description": "A button in the in the _3rd-party filters_ pane"
+  },
+  "3pPurgeAll": {
+    "message": "தற்காலிகச் சேமிப்புகள் அனைத்தையும் அகற்று",
+    "description": "A button in the in the _3rd-party filters_ pane"
+  },
+  "3pParseAllABPHideFiltersPrompt1": {
+    "message": "இலக்கணகூறை விவரி மற்றும் ஒப்பனை வடிகட்டிகளை செயல்படுத்து.",
+    "description": "English: Parse and enforce Adblock+ element hiding filters."
+  },
+  "3pParseAllABPHideFiltersInfo": {
+    "message": "<p>இந்தத் தேர்வு <a href=\"https://adblockplus.org/en/faq_internal#elemhide\">Adblock Plus-க்கு ஏற்ற &ldquo;உறுப்பு மறைக்கும்&rdquo; வடிகட்டிகளைப்</a> படிப்பதையும் பயன்படுத்துவத்தையும் செயல்படுத்தும். இந்த வடிகட்டிகள் அடிப்படையில் மேலோட்டமானவை. இணையப் பக்கத்தின் தோற்றத்தில் தொந்தரவாகக் கருதப்பட்டு, ஆனால் இணையக்கோரிக்கைகளை வடிகட்டும் எஞ்சினின் மூலம் தடுக்கப்பட முடியாத பக்க-உறுப்புகளை, பார்வையிலிருந்து மட்டும் மறைக்கும்</p><p>இந்தத் தேர்வு uBlock₀-இன் நினைவக உபயோகத்தை அதிகரிக்கும்.</p>",
+    "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
+  },
+  "3pIgnoreGenericCosmeticFilters": {
+    "message": "பொதுவான ஒப்பனை வடிகட்டிகளை புறக்கணி",
+    "description": "This will cause uBO to ignore all generic cosmetic filters."
+  },
+  "3pIgnoreGenericCosmeticFiltersInfo": {
+    "message": "பொதுவான ஒப்பனை வடிப்பான்கள் அனைத்து ஒப்பனை வடிப்பான்களாகும், அவை எல்லா வலைத்தளங்களிலும் பொருந்தும். இந்த விருப்பத்தை இயக்குவது பொதுவான ஒப்பனை வடிப்பான்களைக் கையாளுவதன் விளைவாக வலைப்பக்கங்களில் சேர்க்கப்பட்ட நினைவகம் மற்றும் CPU மேல்நிலை ஆகியவற்றை நீக்கும்.குறைந்த சக்திவாய்ந்த சாதனங்களில் இந்த விருப்பத்தை இயக்க பரிந்துரைக்கப்படுகிறது.",
+    "description": "Describes the purpose of the 'Ignore generic cosmetic filters' feature."
+  },
+  "3pListsOfBlockedHostsHeader": {
+    "message": "தடைசெய்யப்பட்ட வழங்கிகளின் பட்டியல்",
+    "description": "English: Lists of blocked hosts"
+  },
+  "3pApplyChanges": {
+    "message": "மாற்றங்களைச் செயல்படுத்து",
+    "description": "English: Apply changes"
+  },
+  "3pGroupDefault": {
+    "message": "உள்ளமைக்கப்பட்ட",
+    "description": "Header for the uBlock filters section in 'Filter lists pane'"
+  },
+  "3pGroupAds": {
+    "message": "விளம்பரங்கள்",
+    "description": "English: Ads"
+  },
+  "3pGroupPrivacy": {
+    "message": "தனியுரிமை",
+    "description": "English: Privacy"
+  },
+  "3pGroupMalware": {
+    "message": "தீப்பொருள் ஆள்களங்கள்",
+    "description": "English: Malware domains"
+  },
+  "3pGroupAnnoyances": {
+    "message": "எரிச்சல்கள்",
+    "description": "The header identifying the filter lists in the category 'annoyances'"
+  },
+  "3pGroupMultipurpose": {
+    "message": "பல்நோக்கு வடிகட்டி",
+    "description": "English: Multipurpose"
+  },
+  "3pGroupRegions": {
+    "message": "மாநில பகுதிகள், மொழிகள் வாரியான",
+    "description": "English: Regions, languages"
+  },
+  "3pGroupCustom": {
+    "message": "தனிபயன்",
+    "description": "English: Custom"
+  },
+  "3pImport": {
+    "message": "இறக்குமதி ...",
+    "description": "The label for the checkbox used to import external filter lists"
+  },
+  "3pExternalListsHint": {
+    "message": "ஒரு வரிக்கு ஒரு இணைய முகவரி. &lsquo;!&rsquo; எனும் எழுத்தில் தொடங்கும் வரிகள் புறக்கணிக்கப்படும். தவறான முகவரிகளும் அமைதியாகப் புறக்கணிக்கப்படும்.",
+    "description": "Short information about how to use the textarea to import external filter lists by URL"
+  },
+  "3pExternalListObsolete": {
+    "message": "காலாவதியாகிவிட்டது",
+    "description": "used as a tooltip for the out-of-date icon beside a list"
+  },
+  "3pViewContent": {
+    "message": "உள்ளடக்கத்தைக் காண்க",
+    "description": "used as a tooltip for eye icon beside a list"
+  },
+  "3pLastUpdate": {
+    "message": "கடைசி புதுப்பிப்பு: {{முன்பு}}.\nபுதுப்பிப்பை கட்டாயப்படுத்த கிளிக் செய்க.",
+    "description": "used as a tooltip for the clock icon beside a list"
+  },
+  "3pUpdating": {
+    "message": "புதுப்பிக்கிறது...",
+    "description": "used as a tooltip for the spinner icon beside a list"
+  },
+  "3pNetworkError": {
+    "message": "நெட்வொர்க் பிழை வளத்தைப் புதுப்பிப்பதைத் தடுத்தது.",
+    "description": "used as a tooltip for error icon beside a list"
+  },
+  "1pFormatHint": {
+    "message": "ஒரு வரிக்கு ஒரு வடிகட்டி. வடிகட்டி என்பது வெறும் வழங்கிப்பெயராக இருக்கலாம், அல்லது Adblock Plus-க்குப் பொருந்தும் வடிகட்டியாக இருக்கலாம். &lsquo;!&rsquo; எனும் எழுத்தில் தொடங்கும் வரிகள் புறக்கணிக்கப்படும்.",
+    "description": "Short information about how to create custom filters"
+  },
+  "1pImport": {
+    "message": "இறக்குமதி செய் மற்றும் இணை",
+    "description": "English: Import and append"
+  },
+  "1pExport": {
+    "message": "ஏற்று",
+    "description": "English: Export"
+  },
+  "1pExportFilename": {
+    "message": "my-ublock-dynamic-rules_{{datetime}}.txt",
+    "description": "English: my-ublock-static-filters_{{datetime}}.txt"
+  },
+  "1pApplyChanges": {
+    "message": "மாற்றங்களைச் செயல்படுத்து",
+    "description": "English: Apply changes"
+  },
+  "rulesPermanentHeader": {
+    "message": "நிரந்தரமான விதிகள்",
+    "description": "header"
+  },
+  "rulesTemporaryHeader": {
+    "message": "தற்காலிக விதிகள்",
+    "description": "header"
+  },
+  "rulesRevert": {
+    "message": "முன்நிலையாக்கு",
+    "description": "This will remove all temporary rules"
+  },
+  "rulesCommit": {
+    "message": "உறுதியளி",
+    "description": "This will persist temporary rules"
+  },
+  "rulesEdit": {
+    "message": "தொகு",
+    "description": "Will enable manual-edit mode (textarea)"
+  },
+  "rulesEditSave": {
+    "message": "சேமி",
+    "description": "Will save manually-edited content and exit manual-edit mode"
+  },
+  "rulesEditDiscard": {
+    "message": "நிராகரி",
+    "description": "Will discard manually-edited content and exit manual-edit mode"
+  },
+  "rulesImport": {
+    "message": "கோப்பிலிருந்து இறக்குமதி செய் ...",
+    "description": ""
+  },
+  "rulesExport": {
+    "message": "கோப்பினுள் ஏற்று",
+    "description": ""
+  },
+  "rulesDefaultFileName": {
+    "message": "my-ublock-dynamic-rules_{{datetime}}.txt",
+    "description": "default file name to use"
+  },
+  "rulesHint": {
+    "message": "உங்களுடைய மாறுநிலை வடிகட்டி விதிப் பட்டியல்கள்.",
+    "description": "English: List of your dynamic filtering rules."
+  },
+  "rulesFormatHint": {
+    "message": "விதி தொடரியல்: <code> மூல இலக்கு வகை செயல் </ குறியீடு> (<a href='https://github.com/gorhill/uBlock/wiki/Dynamic-filtering:-rule-syntax'> முழு ஆவணங்கள் </a> ).",
+    "description": "English: dynamic rule syntax and full documentation."
+  },
+  "rulesSort": {
+    "message": "வகைபடுத்து:",
+    "description": "English: label for sort option."
+  },
+  "rulesSortByType": {
+    "message": "விதி வகை",
+    "description": "English: a sort option for list of rules."
+  },
+  "rulesSortBySource": {
+    "message": "மூல",
+    "description": "English: a sort option for list of rules."
+  },
+  "rulesSortByDestination": {
+    "message": "இலக்கு",
+    "description": "English: a sort option for list of rules."
+  },
+  "whitelistPrompt": {
+    "message": "எந்தெந்தப் பக்கங்களில் uBlock₀ முடக்கப்பட வேண்டுமென்பதை அனுமதிப்பட்ட கட்டளைகள் ஆணையிடுகின்றன. வரிக்கு ஒரு இடுகை மட்டுமே. தவறான கட்டளைகள் அமைதியாகப் புறக்கணிக்கப்படும்.",
+    "description": "The name of the trusted sites pane."
+  },
+  "whitelistImport": {
+    "message": "இறக்குமதி செய்து சேர்க்கவும்",
+    "description": "English: Import and append"
+  },
+  "whitelistExport": {
+    "message": "ஏற்று",
+    "description": "English: Export"
+  },
+  "whitelistExportFilename": {
+    "message": "my-ublock-dynamic-rules_{{datetime}}.txt",
+    "description": "The default filename to use for import/export purpose"
+  },
+  "whitelistApply": {
+    "message": "மாற்றங்களைச் செயல்படுத்து",
+    "description": "English: Apply changes"
+  },
+  "logRequestsHeaderType": {
+    "message": "வகை",
+    "description": "English: Type"
+  },
+  "logRequestsHeaderDomain": {
+    "message": "ஆள்களம்",
+    "description": "English: Domain"
+  },
+  "logRequestsHeaderURL": {
+    "message": "உரலி",
+    "description": "English: URL"
+  },
+  "logRequestsHeaderFilter": {
+    "message": "வடிகட்டு",
+    "description": "English: Filter"
+  },
+  "logAll": {
+    "message": "அனைத்தும்",
+    "description": "Appears in the logger's tab selector"
+  },
+  "logBehindTheScene": {
+    "message": "இ.தளங்களின் பின்னால் நடப்பவை",
+    "description": "Pretty name for behind-the-scene network requests"
+  },
+  "loggerCurrentTab": {
+    "message": "தற்போதைய தாவல்",
+    "description": "Appears in the logger's tab selector"
+  },
+  "loggerReloadTip": {
+    "message": "தாவல் உள்ளடக்கத்தை மீண்டும் ஏற்றவும்",
+    "description": "Tooltip for the reload button in the logger page"
+  },
+  "loggerDomInspectorTip": {
+    "message": "DOM இன்ஸ்பெக்டரை நிலைமாற்று",
+    "description": "Tooltip for the DOM inspector button in the logger page"
+  },
+  "loggerPopupPanelTip": {
+    "message": "பாப்அப் பேனலை நிலைமாற்று",
+    "description": "Tooltip for the popup panel button in the logger page"
+  },
+  "loggerInfoTip": {
+    "message": "uBlock தோற்றம் விக்கி: லாக்கர்",
+    "description": "Tooltip for the top-right info label in the logger page"
+  },
+  "loggerClearTip": {
+    "message": "லாகரை அழி",
+    "description": "Tooltip for the eraser in the logger page; used to blank the content of the logger"
+  },
+  "loggerPauseTip": {
+    "message": "லாகரை இடைநிறுத்து (உள்வரும் எல்லா தரவையும் நிராகரிக்கவும்)",
+    "description": "Tooltip for the pause button in the logger page"
+  },
+  "loggerUnpauseTip": {
+    "message": "லாகரை இடைநிறுத்து",
+    "description": "Tooltip for the play button in the logger page"
+  },
+  "loggerRowFiltererButtonTip": {
+    "message": "லாகர் வடிகட்டலை நிலைமாற்று",
+    "description": "Tooltip for the row filterer button in the logger page"
+  },
+  "logFilterPrompt": {
+    "message": "பதிகை உருப்படிகளை வடிகட்டு",
+    "description": "Placeholder string for logger output filtering input field"
+  },
+  "loggerRowFiltererBuiltinTip": {
+    "message": "லாகர் வடிகட்டுதல் விருப்பங்கள்",
+    "description": "Tooltip for the button to bring up logger output filtering options"
+  },
+  "loggerRowFiltererBuiltinNot": {
+    "message": "இல்லை",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerRowFiltererBuiltinEventful": {
+    "message": "eventful",
+    "description": "A keyword in the built-in row filtering expression: all items corresponding to uBO doing something (blocked, allowed, redirected, etc.)"
+  },
+  "loggerRowFiltererBuiltinBlocked": {
+    "message": "தடுக்கப்பட்டது",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerRowFiltererBuiltinAllowed": {
+    "message": "அனுமதிக்கப்படுகிறது",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerRowFiltererBuiltinModified": {
+    "message": "மாற்றப்பட்டது",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerRowFiltererBuiltin1p": {
+    "message": "முதல் கட்சி",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerRowFiltererBuiltin3p": {
+    "message": "மூன்றாம் தரப்பு",
+    "description": "A keyword in the built-in row filtering expression"
+  },
+  "loggerEntryDetailsHeader": {
+    "message": "விவரங்கள்",
+    "description": "Small header to identify the 'Details' pane for a specific logger entry"
+  },
+  "loggerEntryDetailsFilter": {
+    "message": "வடிகட்டி",
+    "description": "Label to identify a filter field"
+  },
+  "loggerEntryDetailsFilterList": {
+    "message": "வடிகட்டி பட்டியல்",
+    "description": "Label to identify a filter list field"
+  },
+  "loggerEntryDetailsRule": {
+    "message": "விதி",
+    "description": "Label to identify a rule field"
+  },
+  "loggerEntryDetailsContext": {
+    "message": "சூழல்",
+    "description": "Label to identify a context field (typically a hostname)"
+  },
+  "loggerEntryDetailsRootContext": {
+    "message": "வேர் சூழல்",
+    "description": "Label to identify a root context field (typically a hostname)"
+  },
+  "loggerEntryDetailsPartyness": {
+    "message": "கட்சித்தன்மை",
+    "description": "Label to identify a field providing partyness information"
+  },
+  "loggerEntryDetailsType": {
+    "message": "வகை",
+    "description": "Label to identify the type of an entry"
+  },
+  "loggerEntryDetailsURL": {
+    "message": "இணைய முகவரி",
+    "description": "Label to identify the URL of an entry"
+  },
+  "loggerURLFilteringHeader": {
+    "message": "மாறுநிலை உரலி வடிகட்டல்",
+    "description": "Small header to identify the dynamic URL filtering section"
+  },
+  "loggerURLFilteringContextLabel": {
+    "message": "சூழல்:",
+    "description": "Label for the context selector"
+  },
+  "loggerURLFilteringTypeLabel": {
+    "message": "வகை:",
+    "description": "Label for the type selector"
+  },
+  "loggerStaticFilteringHeader": {
+    "message": "நிலையான வடிகட்டுதல்",
+    "description": "Small header to identify the static filtering section"
+  },
+  "loggerStaticFilteringSentence": {
+    "message": "{{origin}} தொடங்கும், {{br}}{{url}}-குப் பொருந்தும் முகவரி கொண்ட{{br}}{{type}} பிணையக் கோரிக்கைகளை {{action}},{{br}}பொருந்தும் விதிவிலக்கு வடிகட்டி {{importance}}.",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartBlock": {
+    "message": "முடக்கு",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartAllow": {
+    "message": "அனுமதி",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartType": {
+    "message": "\"{{type}}\" வகை",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartAnyType": {
+    "message": "எந்த வகையும்",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartOrigin": {
+    "message": "“{{origin}}”-இல் இருந்து",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartAnyOrigin": {
+    "message": "எங்கிருந்தும்",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartNotImportant": {
+    "message": "இல்லாவிட்டால் மட்டும்",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringSentencePartImportant": {
+    "message": "இருந்தாலும் கூட‌",
+    "description": "Used in the static filtering wizard"
+  },
+  "loggerStaticFilteringFinderSentence1": {
+    "message": "நிலையான வடிப்பான் <code> {{வடிகட்டி}} </ குறியீடு> இதில் காணப்படுகிறது:",
+    "description": "Below this sentence, the filter list(s) in which the filter was found"
+  },
+  "loggerStaticFilteringFinderSentence2": {
+    "message": "தற்போது இயக்கப்பட்ட வடிகட்டி பட்டியல்களில் நிலையான வடிப்பானைக் கண்டுபிடிக்க முடியவில்லை",
+    "description": "Message to show when a filter cannot be found in any filter lists"
+  },
+  "loggerSettingDiscardPrompt": {
+    "message": "கீழே உள்ள மூன்று நிபந்தனைகளையும் பூர்த்தி செய்யாத லாகர் உள்ளீடுகள் தானாக நிராகரிக்கப்படும்:",
+    "description": "Logger setting: A sentence to describe the purpose of the settings below"
+  },
+  "loggerSettingPerEntryMaxAge": {
+    "message": "கடைசி {{உள்ளீடு} from நிமிடங்களிலிருந்து உள்ளீடுகளைப் பாதுகாக்கவும்",
+    "description": "A logger setting"
+  },
+  "loggerSettingPerTabMaxLoads": {
+    "message": "ஒரு தாவலுக்கு அதிகபட்சம் {{உள்ளீடு}} பக்க சுமைகளைப் பாதுகாக்கவும்",
+    "description": "A logger setting"
+  },
+  "loggerSettingPerTabMaxEntries": {
+    "message": "ஒரு தாவலுக்கு அதிகபட்சம் {{உள்ளீடு}} உள்ளீடுகளை பாதுகாக்கவும்",
+    "description": "A logger setting"
+  },
+  "loggerSettingPerEntryLineCount": {
+    "message": "செங்குத்தாக விரிவாக்கப்பட்ட பயன்முறையில் ஒரு நுழைவுக்கு {{input}} கோடுகளைப் பயன்படுத்தவும்",
+    "description": "A logger setting"
+  },
+  "loggerSettingHideColumnsPrompt": {
+    "message": "நெடுவரிசைகளை மறை:",
+    "description": "Logger settings: a sentence to describe the purpose of the checkboxes below"
+  },
+  "loggerSettingHideColumnTime": {
+    "message": "{{input}} நேரம்",
+    "description": "A label for the time column"
+  },
+  "loggerSettingHideColumnFilter": {
+    "message": "{{input}} வடிகட்டி/சட்டம்",
+    "description": "A label for the filter or rule column"
+  },
+  "loggerSettingHideColumnContext": {
+    "message": "{{input}} சூழல்",
+    "description": "A label for the context column"
+  },
+  "loggerSettingHideColumnPartyness": {
+    "message": "{{input}} கட்சித்தன்மை",
+    "description": "A label for the partyness column"
+  },
+  "loggerExportFormatList": {
+    "message": "பட்டியல்",
+    "description": "Label for radio-button to pick export format"
+  },
+  "loggerExportFormatTable": {
+    "message": "பொருளடக்கம்",
+    "description": "Label for radio-button to pick export format"
+  },
+  "loggerExportEncodePlain": {
+    "message": "வெற்று",
+    "description": "Label for radio-button to pick export text format"
+  },
+  "loggerExportEncodeMarkdown": {
+    "message": "மார்க் டவுன்",
+    "description": "Label for radio-button to pick export text format"
+  },
+  "aboutChangelog": {
+    "message": "நிரல் மாற்றம் மற்றும் வெளியீடுகளின் பதிவு",
+    "description": ""
+  },
+  "aboutWiki": {
+    "message": "விக்கி",
+    "description": "English: project' wiki on GitHub"
+  },
+  "aboutSupport": {
+    "message": "ஆதரவு",
+    "description": "A link for where to get support"
+  },
+  "aboutIssues": {
+    "message": "வெளியீட்டு கண்காணிப்பு",
+    "description": "Text for a link to official issue tracker"
+  },
+  "aboutCode": {
+    "message": "மூல நிரல் (பொது மக்கள் உரிமம் பதிப்பு 3)",
+    "description": "English: Source code (GPLv3)"
+  },
+  "aboutContributors": {
+    "message": "பங்களிப்பாளர்கள்",
+    "description": "English: Contributors"
+  },
+  "aboutSourceCode": {
+    "message": "மூல குறியீடு",
+    "description": "Link text to source code repo"
+  },
+  "aboutTranslations": {
+    "message": "மொழிபெயர்ப்புகள்",
+    "description": "Link text to translations repo"
+  },
+  "aboutFilterLists": {
+    "message": "பட்டியல்களை வடிகட்டவும்",
+    "description": "Link text to uBO's own filter lists repo"
+  },
+  "aboutDependencies": {
+    "message": "வெளிப்புற சார்புகள் (GPLv3- இணக்கமானது):",
+    "description": "Shown in the About pane"
+  },
+  "aboutBackupDataButton": {
+    "message": "கோப்பிற்கு காப்பு பிரதி எடு",
+    "description": "Text for button to create a backup of all settings"
+  },
+  "aboutBackupFilename": {
+    "message": "my-ublock-dynamic-rules_{{datetime}}.txt",
+    "description": "English: my-ublock-backup_{{datetime}}.txt"
+  },
+  "aboutRestoreDataButton": {
+    "message": "கோப்பிலிருந்து மீட்டெடு...",
+    "description": "English: Restore from file..."
+  },
+  "aboutResetDataButton": {
+    "message": "இயல்புநிலை அமைப்புகளை மீட்டெடு...",
+    "description": "English: Reset to default settings..."
+  },
+  "aboutRestoreDataConfirm": {
+    "message": "உங்கள் எல்லா அமைப்புகளும் காப்புப் பதிவைப் {{time}} பயன்படுத்தி மேலெழுதப்படும், பிறகு uBlock மறுதொடக்கம்.\n\nகாப்புப்பட்ட தரவைப் பயன்படுத்தி உள்ள எல்லா அமைப்புகளையும் மேலெழுதவா?",
+    "description": "Message asking user to confirm restore"
+  },
+  "aboutRestoreDataError": {
+    "message": "தகவலை படிக்க முடியவில்லை அல்லது தவறானது",
+    "description": "Message to display when an error occurred during restore"
+  },
+  "aboutResetDataConfirm": {
+    "message": "உங்கள் எல்லா அமைப்புகளும் அகற்றப்படும், பிறகு uBlock மீண்டும் தொடங்கும்.\n\nuBlockகை தொழிற்சாலை அமைப்புகளை மீட்டமைக்கவ?",
+    "description": "Message asking user to confirm reset"
+  },
+  "errorCantConnectTo": {
+    "message": "பிணையத்தில் பிழை: {{msg}}",
+    "description": "English: Network error: {{msg}}"
+  },
+  "subscriberConfirm": {
+    "message": "uBlock₀: பின்வரும் உரலியை உங்களுடைய தனிபயன் வடிகட்டியில் சேர்க்கலாமா?\n\nதலைப்பு: \"{{title}}\"\nஉரலி: {{url}}",
+    "description": "No longer used"
+  },
+  "subscribeButton": {
+    "message": "சந்தாதராகு",
+    "description": "For the button used to subscribe to a filter list"
+  },
+  "elapsedOneMinuteAgo": {
+    "message": "ஒரு நிமிடம் முன்பு",
+    "description": "English: a minute ago"
+  },
+  "elapsedManyMinutesAgo": {
+    "message": "{{value}} நிமிடம் முன்பு",
+    "description": "English: {{value}} minutes ago"
+  },
+  "elapsedOneHourAgo": {
+    "message": "ஒரு மணி நேரம் முன்பு",
+    "description": "English: an hour ago"
+  },
+  "elapsedManyHoursAgo": {
+    "message": "{{value}} மணி நேரம் முன்பு",
+    "description": "English: {{value}} hours ago"
+  },
+  "elapsedOneDayAgo": {
+    "message": "ஒரு நாள் முன்பு",
+    "description": "English: a day ago"
+  },
+  "elapsedManyDaysAgo": {
+    "message": "{{value}} நாள் முன்பு",
+    "description": "English: {{value}} days ago"
+  },
+  "showDashboardButton": {
+    "message": "நிர்வாக மையத்தைக் காட்டுக",
+    "description": "Firefox/Fennec-specific: Show Dashboard"
+  },
+  "showNetworkLogButton": {
+    "message": "பதிவேட்டைக் காண்பிக்கவும்",
+    "description": "Firefox/Fennec-specific: Show Logger"
+  },
+  "fennecMenuItemBlockingOff": {
+    "message": "அணைந்து விட்டது",
+    "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
+  },
+  "docblockedPrompt1": {
+    "message": "uBlock Origin பின்வரும் பக்கத்தை ஏற்றுவதில் இருந்து தடுத்தது:",
+    "description": "Used in the strict-blocking page"
+  },
+  "docblockedPrompt2": {
+    "message": "ஏனெனில் பின்வரும் வடிகட்டி",
+    "description": "Used in the strict-blocking page"
+  },
+  "docblockedNoParamsPrompt": {
+    "message": "உரலியில் அளவுருக்கள் இல்லாமல்",
+    "description": "label to be used for the parameter-less URL: https://cloud.githubusercontent.com/assets/585534/9832014/bfb1b8f0-593b-11e5-8a27-fba472a5529a.png"
+  },
+  "docblockedFoundIn": {
+    "message": "இதனுள் கண்டறியப்பட்டது:",
+    "description": "English: List of filter list names follows"
+  },
+  "docblockedBack": {
+    "message": "பின் செல்",
+    "description": "English: Go back"
+  },
+  "docblockedClose": {
+    "message": "இந்த சாளரத்தை மூடவும்",
+    "description": "English: Close this window"
+  },
+  "docblockedProceed": {
+    "message": "{{hostname}}-இல் கண்டிப்பான தடையைச்‌ செயலிழக்கச் செய்",
+    "description": "English: Disable strict blocking for {{hostname}} ..."
+  },
+  "docblockedDisableTemporary": {
+    "message": "தற்காலிகமாக",
+    "description": "English: Temporarily"
+  },
+  "docblockedDisablePermanent": {
+    "message": "நிரந்தரமாக",
+    "description": "English: Permanently"
+  },
+  "cloudPush": {
+    "message": "மேகக்கணினி சேமிப்பகத்திற்கு ஏற்று",
+    "description": "tooltip"
+  },
+  "cloudPull": {
+    "message": "மேகக்கணினி சேமிப்பகத்திலிருந்து இறக்கு",
+    "description": "tooltip"
+  },
+  "cloudPullAndMerge": {
+    "message": "மேகக்கணினி சேமிப்பகத்திலிருந்து இறக்கியபின் நடப்பு அமைப்புகளுடன் இணை",
+    "description": "tooltip"
+  },
+  "cloudNoData": {
+    "message": "...\n...",
+    "description": ""
+  },
+  "cloudDeviceNamePrompt": {
+    "message": "இந்தச் சாதனத்தின் பெயர்:",
+    "description": "used as a prompt for the user to provide a custom device name"
+  },
+  "advancedSettingsWarning": {
+    "message": "எச்சரிக்கை! இந்த மேம்பட்ட அமைப்புகளை உங்கள் சொந்த ஆபத்தில் மாற்றவும்.",
+    "description": "A warning to users at the top of 'Advanced settings' page"
+  },
+  "genericSubmit": {
+    "message": "சமர்ப்பி",
+    "description": "for generic 'Submit' buttons"
+  },
+  "genericApplyChanges": {
+    "message": "மாற்றங்களைச் செயல்படுத்து",
+    "description": "for generic 'Apply changes' buttons"
+  },
+  "genericRevert": {
+    "message": "முன்நிலையாக்கு",
+    "description": "for generic 'Revert' buttons"
+  },
+  "genericBytes": {
+    "message": "பைட்டுகள்",
+    "description": ""
+  },
+  "contextMenuBlockElementInFrame": {
+    "message": "சட்டத்தில் தொகுதி உறுப்பு ...",
+    "description": "An entry in the browser's contextual menu"
+  },
+  "contextMenuTemporarilyAllowLargeMediaElements": {
+    "message": "தற்காலிகமாகப் பெரிய ஒலி‍-ஒளி-படத்தொகுப்புகளின் கூறுகளை அனுமதி",
+    "description": "A context menu entry, present when large media elements have been blocked on the current site"
+  },
+  "shortcutCapturePlaceholder": {
+    "message": "குறுக்குவழியைத் தட்டச்சு செய்க",
+    "description": "Placeholder string for input field used to capture a keyboard shortcut"
+  },
+  "genericMergeViewScrollLock": {
+    "message": "ஸ்க்ரோலிங் பூட்டு மாற்று",
+    "description": "Tooltip for the button used to lock scrolling between the views in the 'My rules' pane"
+  },
+  "genericCopyToClipboard": {
+    "message": "இடைநிலைப் பலகைக்கு நகலெடுக்கவும்",
+    "description": "Label for buttons used to copy something to the clipboard"
+  },
+  "toggleBlockingProfile": {
+    "message": "தடுப்பு சுயவிவரத்தை நிலைமாற்று",
+    "description": "Label for keyboard shortcut used to toggle blocking profile"
+  },
+  "relaxBlockingMode": {
+    "message": "தடுப்பு பயன்முறையை தளர்த்தவும்",
+    "description": "Label for keyboard shortcut used to relax blocking mode (meant to replace 'Toggle blocking profile')"
+  },
+  "storageUsed": {
+    "message": "பயன்படுத்தப்பட்ட சேமிப்பகத்தின் அளவு: {{value}} பைட்டுகள்",
+    "description": " In Setting pane, renders as (example): Storage used: 13.2 MB"
+  },
+  "KB": {
+    "message": "KB",
+    "description": "short for 'kilobytes'"
+  },
+  "MB": {
+    "message": "MB",
+    "description": "short for 'megabytes'"
+  },
+  "GB": {
+    "message": "GB",
+    "description": "short for 'gigabytes'"
+  },
+  "clickToLoad": {
+    "message": "ஏற்ற கிளிக் செய்க",
+    "description": "Message used in frame placeholders"
+  },
+  "dummy": {
+    "message": "This entry must be the last one",
+    "description": "so we dont need to deal with comma for last entry"
+  }
 }

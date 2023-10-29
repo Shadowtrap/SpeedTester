@@ -29,13 +29,7 @@
     const duplicates = new Set();
 
     const filterDB = new µb.staticExtFilteringEngine.HostnameBasedDB(2);
-    const sessionFilterDB = new (
-        class extends µb.staticExtFilteringEngine.SessionDB {
-            compile(s) {
-                return µb.staticExtFilteringEngine.compileSelector(s.slice(1));
-            }
-        }
-    )();
+    const sessionFilterDB = new µb.staticExtFilteringEngine.SessionDB();
 
     let acceptedCount = 0;
     let discardedCount = 0;
@@ -243,12 +237,12 @@
         µBlock.filteringContext
             .duplicate()
             .fromTabId(details.tabId)
-            .setRealm('cosmetic')
+            .setRealm('extended')
             .setType('dom')
             .setURL(details.url)
             .setDocOriginFromURL(details.url)
             .setFilter({
-                source: 'cosmetic',
+                source: 'extended',
                 raw: `${exception === 0 ? '##' : '#@#'}^${selector}`
             })
             .toLogger();
@@ -298,28 +292,27 @@
         filterDB.collectGarbage();
     };
 
-    api.compile = function(parsed, writer) {
-        const selector = parsed.suffix.slice(1).trim();
-        const compiled = µb.staticExtFilteringEngine.compileSelector(selector);
+    api.compile = function(parser, writer) {
+        const { raw, compiled, exception } = parser.result;
         if ( compiled === undefined ) {
             const who = writer.properties.get('assetKey') || '?';
             µb.logger.writeOne({
                 realm: 'message',
                 type: 'error',
-                text: `Invalid HTML filter in ${who}: ##${selector}`
+                text: `Invalid HTML filter in ${who}: ##${raw}`
             });
             return;
         }
 
-        // 1002 = html filtering
-        writer.select(1002);
+        writer.select(µb.compiledHTMLSection);
 
         // TODO: Mind negated hostnames, they are currently discarded.
 
-        for ( const hn of parsed.hostnames ) {
-            if ( hn.charCodeAt(0) === 0x7E /* '~' */ ) { continue; }
+        for ( const { hn, not, bad } of parser.extOptions() ) {
+            if ( bad ) { continue; }
             let kind = 0;
-            if ( parsed.exception ) {
+            if ( exception ) {
+                if ( not ) { continue; }
                 kind |= 0b01;
             }
             if ( compiled.charCodeAt(0) === 0x7B /* '{' */ ) {
@@ -329,12 +322,18 @@
         }
     };
 
+    api.compileTemporary = function(parser) {
+        return {
+            session: sessionFilterDB,
+            selector: parser.result.compiled,
+        };
+    };
+
     api.fromCompiledContent = function(reader) {
         // Don't bother loading filters if stream filtering is not supported.
         if ( µb.canFilterResponseData === false ) { return; }
 
-        // 1002 = html filtering
-        reader.select(1002);
+        reader.select(µb.compiledHTMLSection);
 
         while ( reader.next() ) {
             acceptedCount += 1;
@@ -356,15 +355,6 @@
     api.retrieve = function(details) {
         const hostname = details.hostname;
 
-        // https://github.com/gorhill/uBlock/issues/2835
-        //   Do not filter if the site is under an `allow` rule.
-        if (
-            µb.userSettings.advancedUserEnabled &&
-            µb.sessionFirewall.evaluateCellZY(hostname, hostname, '*') === 2
-        ) {
-            return;
-        }
-
         const plains = new Set();
         const procedurals = new Set();
         const exceptions = new Set();
@@ -376,14 +366,25 @@
             hostname,
             [ plains, exceptions, procedurals, exceptions ]
         );
-        if ( details.entity !== '' ) {
-            filterDB.retrieve(
-                `${hostname.slice(0, -details.domain.length)}${details.entity}`,
-                [ plains, exceptions, procedurals, exceptions ]
-            );
-        }
+        const entity = details.entity !== ''
+            ? `${hostname.slice(0, -details.domain.length)}${details.entity}`
+            : '*';
+        filterDB.retrieve(
+            entity,
+            [ plains, exceptions, procedurals, exceptions ],
+            1
+        );
     
         if ( plains.size === 0 && procedurals.size === 0 ) { return; }
+
+        // https://github.com/gorhill/uBlock/issues/2835
+        //   Do not filter if the site is under an `allow` rule.
+        if (
+            µb.userSettings.advancedUserEnabled &&
+            µb.sessionFirewall.evaluateCellZY(hostname, hostname, '*') === 2
+        ) {
+            return;
+        }
 
         const out = { plains, procedurals };
 

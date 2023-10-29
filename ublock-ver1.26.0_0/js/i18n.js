@@ -26,7 +26,8 @@
 // This file should always be included at the end of the `body` tag, so as
 // to ensure all i18n targets are already loaded.
 
-(function() {
+{
+// >>>>> start of local scope
 
 /******************************************************************************/
 
@@ -68,7 +69,7 @@ const safeTextToTagNode = function(text) {
     }
 };
 
-const safeTextToTextNode = (function() {
+const expandHtmlEntities = (( ) => {
     const entities = new Map([
         // TODO: Remove quote entities once no longer present in translation
         // files. Other entities must stay.
@@ -87,16 +88,34 @@ const safeTextToTextNode = (function() {
         if ( text.indexOf('&') !== -1 ) {
             text = text.replace(/&[a-z]+;/g, decodeEntities);
         }
-        return document.createTextNode(text);
+        return text;
     };
 })();
+
+const safeTextToTextNode = function(text) {
+    return document.createTextNode(expandHtmlEntities(text));
+};
 
 const safeTextToDOM = function(text, parent) {
     if ( text === '' ) { return; }
 
     // Fast path (most common).
     if ( text.indexOf('<') === -1 ) {
-        parent.appendChild(safeTextToTextNode(text));
+        const toInsert = safeTextToTextNode(text);
+        let toReplace = parent.childElementCount !== 0
+            ? parent.firstChild
+            : null;
+        while ( toReplace !== null ) {
+            if ( toReplace.nodeType === 3 && toReplace.nodeValue === '_' ) {
+                break;
+            }
+            toReplace = toReplace.nextSibling;
+        }
+        if ( toReplace !== null ) {
+            parent.replaceChild(toInsert, toReplace);
+        } else {
+            parent.appendChild(toInsert);
+        }
         return;
     }
     // Slow path.
@@ -187,8 +206,22 @@ vAPI.i18n.render = function(context) {
                 if ( pos !== -1 ) {
                     part = part.slice(0, pos) + part.slice(-2);
                 }
-                const node = elem.querySelector(part.slice(2, -2));
-                if ( node !== null ) {
+                const selector = part.slice(2, -2);
+                let node;
+                // Ideally, the i18n strings explicitly refer to the
+                // class of the element to insert. However for now we
+                // will create a class from what is currently found in
+                // the placeholder and first try to lookup the resulting
+                // selector. This way we don't have to revisit all
+                // translations just for the sake of declaring the proper
+                // selector in the placeholder field.
+                if ( selector.charCodeAt(0) !== 0x2E /* '.' */ ) {
+                    node = elem.querySelector(`.${selector}`);
+                }
+                if ( node instanceof Element === false ) {
+                    node = elem.querySelector(selector);
+                }
+                if ( node instanceof Element ) {
                     safeTextToDOM(textBefore, fragment);
                     fragment.appendChild(node);
                     textBefore = '';
@@ -206,7 +239,7 @@ vAPI.i18n.render = function(context) {
     for ( const elem of root.querySelectorAll('[data-i18n-title]') ) {
         const text = vAPI.i18n(elem.getAttribute('data-i18n-title'));
         if ( !text ) { continue; }
-        elem.setAttribute('title', text);
+        elem.setAttribute('title', expandHtmlEntities(text));
     }
 
     for ( const elem of root.querySelectorAll('[placeholder]') ) {
@@ -255,6 +288,7 @@ vAPI.i18n.renderElapsedTimeToString = function(tstamp) {
 
 /******************************************************************************/
 
-})();
+// <<<<< end of local scope
+}
 
 /******************************************************************************/

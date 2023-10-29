@@ -33,6 +33,10 @@ const errorCantConnectTo = vAPI.i18n('errorCantConnectTo');
 
 const api = {};
 
+// A hint for various pieces of code to take measures if possible to save
+// bandwidth of remote servers.
+let remoteServerFriendly = false;
+
 /******************************************************************************/
 
 const observers = [];
@@ -157,14 +161,15 @@ api.fetchText = async function(url) {
     // https://github.com/gorhill/uBlock/issues/2592
     //   Force browser cache to be bypassed, but only for resources which have
     //   been fetched more than one hour ago.
-    //
     // https://github.com/uBlockOrigin/uBlock-issues/issues/682#issuecomment-515197130
     //   Provide filter list authors a way to completely bypass
     //   the browser cache.
     // https://github.com/gorhill/uBlock/commit/048bfd251c9b#r37972005
     //   Use modulo prime numbers to avoid generating the same token at the
     //   same time across different days.
-    if ( isExternal ) {
+    // Do not bypass browser cache if we are asked to be gentle on remote
+    // servers.
+    if ( isExternal && remoteServerFriendly !== true ) {
         const cacheBypassToken =
             µBlock.hiddenSettings.updateAssetBypassBrowserCache
                 ? Math.floor(Date.now() /    1000) % 86413
@@ -222,7 +227,11 @@ api.fetchFilterList = async function(mainlistURL) {
     //   Anything under URL's root directory is allowed to be fetched. The
     //   URL of a sublist will always be relative to the URL of the parent
     //   list (instead of the URL of the root list).
-    let rootDirectoryURL = toParsedURL(mainlistURL);
+    let rootDirectoryURL = toParsedURL(
+        reIsExternalPath.test(mainlistURL)
+            ? mainlistURL
+            : vAPI.getURL(mainlistURL)
+    );
     if ( rootDirectoryURL !== undefined ) {
         const pos = rootDirectoryURL.pathname.lastIndexOf('/');
         if ( pos !== -1 ) {
@@ -235,6 +244,9 @@ api.fetchFilterList = async function(mainlistURL) {
 
     const sublistURLs = new Set();
 
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/1113
+    //   Process only `!#include` directives which are not excluded by an
+    //   `!#if` directive.
     const processIncludeDirectives = function(results) {
         const out = [];
         const reInclude = /^!#include +(\S+)/gm;
@@ -245,29 +257,36 @@ api.fetchFilterList = async function(mainlistURL) {
             }
             if ( result instanceof Object === false ) { continue; }
             const content = result.content;
-            let lastIndex = 0;
-            for (;;) {
-                if ( rootDirectoryURL === undefined ) { break; }
-                const match = reInclude.exec(content);
-                if ( match === null ) { break; }
-                if ( toParsedURL(match[1]) !== undefined ) { continue; }
-                if ( match[1].indexOf('..') !== -1 ) { continue; }
-                const subURL = toParsedURL(result.url);
-                subURL.pathname = subURL.pathname.replace(/[^/]+$/, match[1]);
-                if ( subURL.href.startsWith(rootDirectoryURL.href) === false ) {
+            const slices = µBlock.preparseDirectives.split(content);
+            for ( let i = 0, n = slices.length - 1; i < n; i++ ) {
+                const slice = content.slice(slices[i+0], slices[i+1]);
+                if ( (i & 1) !== 0 ) {
+                    out.push(slice);
                     continue;
                 }
-                if ( sublistURLs.has(subURL.href) ) { continue; }
-                sublistURLs.add(subURL.href);
-                out.push(
-                    content.slice(lastIndex, match.index),
-                    `! >>>>>>>> ${subURL.href}`,
-                    api.fetchText(subURL.href),
-                    `! <<<<<<<< ${subURL.href}`
-                );
-                lastIndex = reInclude.lastIndex;
+                let lastIndex = 0;
+                for (;;) {
+                    if ( rootDirectoryURL === undefined ) { break; }
+                    const match = reInclude.exec(slice);
+                    if ( match === null ) { break; }
+                    if ( toParsedURL(match[1]) !== undefined ) { continue; }
+                    if ( match[1].indexOf('..') !== -1 ) { continue; }
+                    // Compute nested list path relative to parent list path
+                    const pos = result.url.lastIndexOf('/');
+                    if ( pos === -1 ) { continue; }
+                    const subURL = result.url.slice(0, pos + 1) + match[1];
+                    if ( sublistURLs.has(subURL) ) { continue; }
+                    sublistURLs.add(subURL);
+                    out.push(
+                        slice.slice(lastIndex, match.index + match[0].length),
+                        `! >>>>>>>> ${subURL}`,
+                        api.fetchText(subURL),
+                        `! <<<<<<<< ${subURL}`
+                    );
+                    lastIndex = reInclude.lastIndex;
+                }
+                out.push(lastIndex === 0 ? slice : slice.slice(lastIndex));
             }
-            out.push(lastIndex === 0 ? content : content.slice(lastIndex));
         }
         return out;
     };
@@ -280,10 +299,19 @@ api.fetchFilterList = async function(mainlistURL) {
     let allParts = [
         this.fetchText(mainlistURL)
     ];
-    for (;;) {
-        allParts = processIncludeDirectives(await Promise.all(allParts));
-        if ( allParts.every(v => typeof v === 'string') ) { break; }
-    }
+    // Abort processing `include` directives if at least one included sublist
+    // can't be fetched.
+    do {
+        allParts = await Promise.all(allParts);
+        const part = allParts.find(part => {
+            return typeof part === 'object' && part.error !== undefined;
+        });
+        if ( part !== undefined ) {
+            return { url: mainlistURL, content: '', error: part.error };
+        }
+        allParts = processIncludeDirectives(allParts);
+    } while ( allParts.some(part => typeof part !== 'string') );
+    // If we reach this point, this means all fetches were successful.
     return {
         url: mainlistURL,
         content: allParts.length === 1
@@ -460,7 +488,21 @@ const getAssetCacheRegistry = function() {
                 bin instanceof Object &&
                 bin.assetCacheRegistry instanceof Object
             ) {
-                assetCacheRegistry = bin.assetCacheRegistry;
+                if ( Object.keys(assetCacheRegistry).length === 0 ) {
+                    assetCacheRegistry = bin.assetCacheRegistry;
+                } else {
+                    console.error(
+                        'getAssetCacheRegistry(): assetCacheRegistry reassigned!'
+                    );
+                    if (
+                        Object.keys(bin.assetCacheRegistry).sort().join() !==
+                        Object.keys(assetCacheRegistry).sort().join()
+                    ) {
+                        console.error(
+                            'getAssetCacheRegistry(): assetCacheRegistry changes overwritten!'
+                        );
+                    }
+                }
             }
             return assetCacheRegistry;
         });
@@ -521,10 +563,12 @@ const assetCacheRead = async function(assetKey, updateReadTime = false) {
 
 const assetCacheWrite = async function(assetKey, details) {
     let content = '';
+    let options = {};
     if ( typeof details === 'string' ) {
         content = details;
     } else if ( details instanceof Object ) {
         content = details.content || '';
+        options = details;
     }
 
     if ( content === '' ) {
@@ -538,8 +582,8 @@ const assetCacheWrite = async function(assetKey, details) {
         entry = cacheDict[assetKey] = {};
     }
     entry.writeTime = entry.readTime = Date.now();
-    if ( details instanceof Object && typeof details.url === 'string' ) {
-        entry.remoteURL = details.url;
+    if ( typeof options.url === 'string' ) {
+        entry.remoteURL = options.url;
     }
     µBlock.cacheStorage.set({
         assetCacheRegistry,
@@ -548,7 +592,9 @@ const assetCacheWrite = async function(assetKey, details) {
 
     const result = { assetKey, content };
     // https://github.com/uBlockOrigin/uBlock-issues/issues/248
-    fireNotification('after-asset-updated', result);
+    if ( options.silent !== true ) {
+        fireNotification('after-asset-updated', result);
+    }
     return result;
 };
 
@@ -568,14 +614,15 @@ const assetCacheRemove = async function(pattern) {
         delete cacheDict[assetKey];
     }
     if ( removedContent.length !== 0 ) {
-        µBlock.cacheStorage.remove(removedContent);
-        µBlock.cacheStorage.set({ assetCacheRegistry });
+        await Promise.all([
+            µBlock.cacheStorage.remove(removedContent),
+            µBlock.cacheStorage.set({ assetCacheRegistry }),
+        ]);
     }
     for ( let i = 0; i < removedEntries.length; i++ ) {
-        fireNotification(
-            'after-asset-updated',
-            { assetKey: removedEntries[i] }
-        );
+        fireNotification('after-asset-updated', {
+            assetKey: removedEntries[i]
+        });
     }
 };
 
@@ -694,11 +741,20 @@ api.get = async function(assetKey, options = {}) {
 
     const assetRegistry = await getAssetSourceRegistry();
     assetDetails = assetRegistry[assetKey] || {};
-    let contentURLs = [];
+    const contentURLs = [];
     if ( typeof assetDetails.contentURL === 'string' ) {
-        contentURLs = [ assetDetails.contentURL ];
+        contentURLs.push(assetDetails.contentURL);
     } else if ( Array.isArray(assetDetails.contentURL) ) {
-        contentURLs = assetDetails.contentURL.slice(0);
+        contentURLs.push(...assetDetails.contentURL);
+    } else if ( reIsExternalPath.test(assetKey) ) {
+        assetDetails.content = 'filters';
+        contentURLs.push(assetKey);
+    }
+
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/1566#issuecomment-826473517
+    //   Use CDN URLs as fall back URLs.
+    if ( Array.isArray(assetDetails.cdnURLs) ) {
+        contentURLs.push(...assetDetails.cdnURLs);
     }
 
     for ( const contentURL of contentURLs ) {
@@ -713,6 +769,7 @@ api.get = async function(assetKey, options = {}) {
             assetCacheWrite(assetKey, {
                 content: details.content,
                 url: contentURL,
+                silent: options.silent === true,
             });
         }
         return reportBack(details.content, contentURL);
@@ -736,11 +793,31 @@ const getRemote = async function(assetKey) {
         return details;
     };
 
-    let contentURLs = [];
+    const contentURLs = [];
     if ( typeof assetDetails.contentURL === 'string' ) {
-        contentURLs = [ assetDetails.contentURL ];
+        contentURLs.push(assetDetails.contentURL);
     } else if ( Array.isArray(assetDetails.contentURL) ) {
-        contentURLs = assetDetails.contentURL.slice(0);
+        contentURLs.push(...assetDetails.contentURL);
+    }
+
+    // If asked to be gentle on remote servers, favour using dedicated CDN
+    // servers. If more than one CDN server is present, randomly shuffle the
+    // set of servers so as to spread the bandwidth burden.
+    //
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/1566#issuecomment-826473517
+    //   In case of manual update, use CDNs URLs as fall back URLs.
+    if ( Array.isArray(assetDetails.cdnURLs) ) {
+        const cdnURLs = assetDetails.cdnURLs.slice();
+        for ( let i = 0, n = cdnURLs.length; i < n; i++ ) {
+            const j = Math.floor(Math.random() * n);
+            if ( j === i ) { continue; }
+            [ cdnURLs[j], cdnURLs[i] ] = [ cdnURLs[i], cdnURLs[j] ];
+        }
+        if ( remoteServerFriendly ) {
+            contentURLs.unshift(...cdnURLs);
+        } else {
+            contentURLs.push(...cdnURLs);
+        }
     }
 
     for ( const contentURL of contentURLs ) {
@@ -756,18 +833,17 @@ const getRemote = async function(assetKey) {
             if ( result.statusCode === 0 ) {
                 error = 'network error';
             }
-            registerAssetSource(
-                assetKey,
-                { error: { time: Date.now(), error } }
-            );
+            registerAssetSource(assetKey, {
+                error: { time: Date.now(), error }
+            });
             continue;
         }
 
         // Success
-        assetCacheWrite(
-            assetKey,
-            { content: result.content, url: contentURL }
-        );
+        assetCacheWrite(assetKey, {
+            content: result.content,
+            url: contentURL
+        });
         registerAssetSource(assetKey, { error: undefined });
         return reportBack(result.content);
     }
@@ -835,9 +911,10 @@ const updaterAssetDelayDefault = 120000;
 const updaterUpdated = [];
 const updaterFetched = new Set();
 
-let updaterStatus,
-    updaterTimer,
-    updaterAssetDelay = updaterAssetDelayDefault;
+let updaterStatus;
+let updaterTimer;
+let updaterAssetDelay = updaterAssetDelayDefault;
+let updaterAuto = false;
 
 const updateFirst = function() {
     updaterStatus = 'updating';
@@ -854,41 +931,51 @@ const updateNext = async function() {
     ]);
 
     const now = Date.now();
-    let assetKeyToUpdate;
+    const toUpdate = [];
     for ( const assetKey in assetDict ) {
         const assetEntry = assetDict[assetKey];
         if ( assetEntry.hasRemoteURL !== true ) { continue; }
         if ( updaterFetched.has(assetKey) ) { continue; }
         const cacheEntry = cacheDict[assetKey];
         if (
-            cacheEntry &&
+            (cacheEntry instanceof Object) &&
             (cacheEntry.writeTime + assetEntry.updateAfter * 86400000) > now
         ) {
             continue;
         }
         if (
-            fireNotification(
-                'before-asset-updated',
-                { assetKey: assetKey,  type: assetEntry.content }
-            ) === true
+            fireNotification('before-asset-updated', {
+                assetKey,
+                type: assetEntry.content
+            }) === true
         ) {
-            assetKeyToUpdate = assetKey;
-            break;
+            toUpdate.push(assetKey);
+            continue;
         }
         // This will remove a cached asset when it's no longer in use.
-        if (
-            cacheEntry &&
-            cacheEntry.readTime < assetCacheRegistryStartTime
-        ) {
+        if ( cacheEntry && cacheEntry.readTime < assetCacheRegistryStartTime ) {
             assetCacheRemove(assetKey);
         }
     }
-    if ( assetKeyToUpdate === undefined ) {
+    if ( toUpdate.length === 0 ) {
         return updateDone();
     }
-    updaterFetched.add(assetKeyToUpdate);
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/1165
+    //   Update most obsolete asset first.
+    toUpdate.sort((a, b) => {
+        const ta = cacheDict[a] !== undefined ? cacheDict[a].writeTime : 0;
+        const tb = cacheDict[b] !== undefined ? cacheDict[b].writeTime : 0;
+        return ta - tb;
+    });
+    updaterFetched.add(toUpdate[0]);
 
-    const result = await getRemote(assetKeyToUpdate);
+    // In auto-update context, be gentle on remote servers.
+    remoteServerFriendly = updaterAuto;
+
+    const result = await getRemote(toUpdate[0]);
+
+    remoteServerFriendly = false;
+
     if ( result.content !== '' ) {
         updaterUpdated.push(result.assetKey);
         if ( result.assetKey === 'assets.json' ) {
@@ -912,10 +999,11 @@ const updateDone = function() {
 
 api.updateStart = function(details) {
     const oldUpdateDelay = updaterAssetDelay;
-    const newUpdateDelay = typeof details.delay === 'number' ?
-        details.delay :
-        updaterAssetDelayDefault;
+    const newUpdateDelay = typeof details.delay === 'number'
+        ? details.delay
+        : updaterAssetDelayDefault;
     updaterAssetDelay = Math.min(oldUpdateDelay, newUpdateDelay);
+    updaterAuto = details.auto === true;
     if ( updaterStatus !== undefined ) {
         if ( newUpdateDelay < oldUpdateDelay ) {
             clearTimeout(updaterTimer);

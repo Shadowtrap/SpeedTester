@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2018 Raymond Hill
+    Copyright (C) 2014-present Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,904 +21,6 @@
 
 'use strict';
 
-// This file can be replaced by platform-specific code. If a platform is
-// known to NOT support user stylsheets, vAPI.supportsUserStylesheets can be
-// set to `false`.
-
-// Chromium 66 and above supports user stylesheets:
-// https://github.com/gorhill/uBlock/issues/3588
-
-if ( typeof vAPI === 'object' ) {
-    vAPI.supportsUserStylesheets =
-        /\bChrom(?:e|ium)\/(?:5\d|6[012345])\b/.test(navigator.userAgent) === false;
-}
-
-
-
-
-
-
-
-
-/*******************************************************************************
-
-    DO NOT:
-    - Remove the following code
-    - Add code beyond the following code
-    Reason:
-    - https://github.com/gorhill/uBlock/pull/3721
-    - uBO never uses the return value from injected content scripts
-
-**/
-
-void 0;
-
-/*******************************************************************************
-
-    uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2017-present Raymond Hill
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see {http://www.gnu.org/licenses/}.
-
-    Home: https://github.com/gorhill/uBlock
-*/
-
-
-// Packaging this file is optional: it is not necessary to package it if the
-// platform is known to not support user stylesheets.
-
-// >>>>>>>> start of HUGE-IF-BLOCK
-if ( typeof vAPI === 'object' && vAPI.supportsUserStylesheets ) {
-
-/******************************************************************************/
-/******************************************************************************/
-
-vAPI.userStylesheet = {
-    added: new Set(),
-    removed: new Set(),
-    apply: function(callback) {
-        if ( this.added.size === 0 && this.removed.size === 0 ) { return; }
-        vAPI.messaging.send('vapi', {
-            what: 'userCSS',
-            add: Array.from(this.added),
-            remove: Array.from(this.removed),
-        }).then(( ) => {
-            if ( callback instanceof Function === false ) { return; }
-            callback();
-        });
-        this.added.clear();
-        this.removed.clear();
-    },
-    add: function(cssText, now) {
-        if ( cssText === '' ) { return; }
-        this.added.add(cssText);
-        if ( now ) { this.apply(); }
-    },
-    remove: function(cssText, now) {
-        if ( cssText === '' ) { return; }
-        this.removed.add(cssText);
-        if ( now ) { this.apply(); }
-    }
-};
-
-/******************************************************************************/
-
-vAPI.DOMFilterer = class {
-    constructor() {
-        this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
-        this.domIsReady = document.readyState !== 'loading';
-        this.disabled = false;
-        this.listeners = [];
-        this.filterset = new Set();
-        this.excludedNodeSet = new WeakSet();
-        this.addedCSSRules = new Set();
-        this.exceptedCSSRules = [];
-        this.reOnlySelectors = /\n\{[^\n]+/g;
-
-        // https://github.com/uBlockOrigin/uBlock-issues/issues/167
-        //   By the time the DOMContentLoaded is fired, the content script might
-        //   have been disconnected from the background page. Unclear why this
-        //   would happen, so far seems to be a Chromium-specific behavior at
-        //   launch time.
-        if ( this.domIsReady !== true ) {
-            document.addEventListener('DOMContentLoaded', ( ) => {
-                if ( vAPI instanceof Object === false ) { return; }
-                this.domIsReady = true;
-                this.commit();
-            });
-        }
-    }
-
-    // Here we will deal with:
-    // - Injecting low priority user styles;
-    // - Notifying listeners about changed filterset.
-    // https://www.reddit.com/r/uBlockOrigin/comments/9jj0y1/no_longer_blocking_ads/
-    //   Ensure vAPI is still valid -- it can go away by the time we are
-    //   called, since the port could be force-disconnected from the main
-    //   process. Another approach would be to have vAPI.SafeAnimationFrame
-    //   register a shutdown job: to evaluate. For now I will keep the fix
-    //   trivial.
-    commitNow() {
-        this.commitTimer.clear();
-        if ( vAPI instanceof Object === false ) { return; }
-        const userStylesheet = vAPI.userStylesheet;
-        for ( const entry of this.addedCSSRules ) {
-            if (
-                this.disabled === false &&
-                entry.lazy &&
-                entry.injected === false
-            ) {
-                userStylesheet.add(
-                    entry.selectors + '\n{' + entry.declarations + '}'
-                );
-            }
-        }
-        this.addedCSSRules.clear();
-        userStylesheet.apply();
-    }
-
-    commit(commitNow) {
-        if ( commitNow ) {
-            this.commitTimer.clear();
-            this.commitNow();
-        } else {
-            this.commitTimer.start();
-        }
-    }
-
-    addCSSRule(selectors, declarations, details = {}) {
-        if ( selectors === undefined ) { return; }
-        const selectorsStr = Array.isArray(selectors)
-                ? selectors.join(',\n')
-                : selectors;
-        if ( selectorsStr.length === 0 ) { return; }
-        const entry = {
-            selectors: selectorsStr,
-            declarations,
-            lazy: details.lazy === true,
-            injected: details.injected === true
-        };
-        this.addedCSSRules.add(entry);
-        this.filterset.add(entry);
-        if (
-            this.disabled === false &&
-            entry.lazy !== true &&
-            entry.injected !== true
-        ) {
-            vAPI.userStylesheet.add(selectorsStr + '\n{' + declarations + '}');
-        }
-        this.commit();
-        if ( details.silent !== true && this.hasListeners() ) {
-            this.triggerListeners({
-                declarative: [ [ selectorsStr, declarations ] ]
-            });
-        }
-    }
-
-    exceptCSSRules(exceptions) {
-        if ( exceptions.length === 0 ) { return; }
-        this.exceptedCSSRules.push(...exceptions);
-        if ( this.hasListeners() ) {
-            this.triggerListeners({ exceptions });
-        }
-    }
-
-    addListener(listener) {
-        if ( this.listeners.indexOf(listener) !== -1 ) { return; }
-        this.listeners.push(listener);
-    }
-
-    removeListener(listener) {
-        const pos = this.listeners.indexOf(listener);
-        if ( pos === -1 ) { return; }
-        this.listeners.splice(pos, 1);
-    }
-
-    hasListeners() {
-        return this.listeners.length !== 0;
-    }
-
-    triggerListeners(changes) {
-        for ( const listener of this.listeners ) {
-            listener.onFiltersetChanged(changes);
-        }
-    }
-
-    excludeNode(node) {
-        this.excludedNodeSet.add(node);
-        this.unhideNode(node);
-    }
-
-    unexcludeNode(node) {
-        this.excludedNodeSet.delete(node);
-    }
-
-    hideNode(node) {
-        if ( this.excludedNodeSet.has(node) ) { return; }
-        if ( this.hideNodeAttr === undefined ) { return; }
-        node.setAttribute(this.hideNodeAttr, '');
-        if ( this.hideNodeStyleSheetInjected ) { return; }
-        this.hideNodeStyleSheetInjected = true;
-        this.addCSSRule(
-            `[${this.hideNodeAttr}]`,
-            'display:none!important;',
-            { silent: true }
-        );
-    }
-
-    unhideNode(node) {
-        if ( this.hideNodeAttr === undefined ) { return; }
-        node.removeAttribute(this.hideNodeAttr);
-    }
-
-    toggle(state, callback) {
-        if ( state === undefined ) { state = this.disabled; }
-        if ( state !== this.disabled ) { return; }
-        this.disabled = !state;
-        const userStylesheet = vAPI.userStylesheet;
-        for ( const entry of this.filterset ) {
-            const rule = `${entry.selectors}\n{${entry.declarations}}`;
-            if ( this.disabled ) {
-                userStylesheet.remove(rule);
-            } else {
-                userStylesheet.add(rule);
-            }
-        }
-        userStylesheet.apply(callback);
-    }
-
-    getAllSelectors_(all) {
-        const out = {
-            declarative: [],
-            exceptions: this.exceptedCSSRules,
-        };
-        for ( const entry of this.filterset ) {
-            let selectors = entry.selectors;
-            if ( all !== true && this.hideNodeAttr !== undefined ) {
-                selectors = selectors
-                                .replace(`[${this.hideNodeAttr}]`, '')
-                                .replace(/^,\n|,\n$/gm, '');
-                if ( selectors === '' ) { continue; }
-            }
-            out.declarative.push([ selectors, entry.declarations ]);
-        }
-        return out;
-    }
-
-    getFilteredElementCount() {
-        const details = this.getAllSelectors_(true);
-        if ( Array.isArray(details.declarative) === false ) { return 0; }
-        const selectors = details.declarative.map(entry => entry[0]);
-        if ( selectors.length === 0 ) { return 0; }
-        return document.querySelectorAll(selectors.join(',\n')).length;
-    }
-
-    getAllSelectors() {
-        return this.getAllSelectors_(false);
-    }
-};
-
-/******************************************************************************/
-/******************************************************************************/
-
-}
-// <<<<<<<< end of HUGE-IF-BLOCK
-
-
-
-
-
-
-
-
-/*******************************************************************************
-
-    DO NOT:
-    - Remove the following code
-    - Add code beyond the following code
-    Reason:
-    - https://github.com/gorhill/uBlock/pull/3721
-    - uBO never uses the return value from injected content scripts
-
-**/
-
-void 0;
-
-/*******************************************************************************
-
-    uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2017-2018 Raymond Hill
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see {http://www.gnu.org/licenses/}.
-
-    Home: https://github.com/gorhill/uBlock
-*/
-
-
-// Packaging this file is optional: it is not necessary to package it if the
-// platform is known to support user stylesheets.
-
-// >>>>>>>> start of HUGE-IF-BLOCK
-if ( typeof vAPI === 'object' && vAPI.userStylesheet === undefined ) {
-
-/******************************************************************************/
-/******************************************************************************/
-
-vAPI.userStylesheet = {
-    style: null,
-    styleFixCount: 0,
-    css: new Map(),
-    disabled: false,
-    apply: function() {
-    },
-    inject: function() {
-        this.style = document.createElement('style');
-        this.style.disabled = this.disabled;
-        const parent = document.head || document.documentElement;
-        if ( parent === null ) { return; }
-        parent.appendChild(this.style);
-        const observer = new MutationObserver(function() {
-            if ( this.style === null ) { return; }
-            if ( this.style.sheet !== null ) { return; }
-            this.styleFixCount += 1;
-            if ( this.styleFixCount < 32 ) {
-                parent.appendChild(this.style);
-            } else {
-                observer.disconnect();
-            }
-        }.bind(this));
-        observer.observe(parent, { childList: true });
-    },
-    add: function(cssText) {
-        if ( cssText === '' || this.css.has(cssText) ) { return; }
-        if ( this.style === null ) { this.inject(); }
-        const sheet = this.style.sheet;
-        if ( !sheet ) { return; }
-        const i = sheet.cssRules.length;
-        sheet.insertRule(cssText, i);
-        this.css.set(cssText, sheet.cssRules[i]);
-    },
-    remove: function(cssText) {
-        if ( cssText === '' ) { return; }
-        const cssRule = this.css.get(cssText);
-        if ( cssRule === undefined ) { return; }
-        this.css.delete(cssText);
-        if ( this.style === null ) { return; }
-        const sheet = this.style.sheet;
-        if ( !sheet ) { return; }
-        const rules = sheet.cssRules;
-        let i = rules.length;
-        while ( i-- ) {
-            if ( rules[i] !== cssRule ) { continue; }
-            sheet.deleteRule(i);
-            break;
-        }
-        if ( rules.length !== 0 ) { return; }
-        const style = this.style;
-        this.style = null;
-        const parent = style.parentNode;
-        if ( parent !== null ) {
-            parent.removeChild(style);
-        }
-    },
-    toggle: function(state) {
-        if ( state === undefined ) { state = this.disabled; }
-        if ( state !== this.disabled ) { return; }
-        this.disabled = !state;
-        if ( this.style !== null ) {
-            this.style.disabled = this.disabled;
-        }
-    }
-};
-
-/******************************************************************************/
-
-vAPI.DOMFilterer = class {
-    constructor() {
-        this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
-        this.domIsReady = document.readyState !== 'loading';
-        this.listeners = [];
-        this.excludedNodeSet = new WeakSet();
-        this.addedNodes = new Set();
-        this.removedNodes = false;
-
-        this.specificSimpleHide = new Set();
-        this.specificSimpleHideAggregated = undefined;
-        this.addedSpecificSimpleHide = [];
-        this.specificComplexHide = new Set();
-        this.specificComplexHideAggregated = undefined;
-        this.addedSpecificComplexHide = [];
-        this.specificOthers = [];
-        this.genericSimpleHide = new Set();
-        this.genericComplexHide = new Set();
-        this.exceptedCSSRules = [];
-
-        this.hideNodeExpando = undefined;
-        this.hideNodeBatchProcessTimer = undefined;
-        this.hiddenNodeObserver = undefined;
-        this.hiddenNodesetToProcess = new Set();
-        this.hiddenNodeset = new WeakSet();
-
-        if ( vAPI.domWatcher instanceof Object ) {
-            vAPI.domWatcher.addListener(this);
-        }
-
-        // https://www.w3.org/community/webed/wiki/CSS/Selectors#Combinators
-        this.reCSSCombinators = /[ >+~]/;
-    }
-
-    commitNow() {
-        this.commitTimer.clear();
-
-        if ( this.domIsReady !== true || vAPI.userStylesheet.disabled ) {
-            return;
-        }
-
-        // Filterset changed.
-
-        if ( this.addedSpecificSimpleHide.length !== 0 ) {
-            //console.time('specific simple filterset changed');
-            //console.log('added %d specific simple selectors', this.addedSpecificSimpleHide.length);
-            const nodes = document.querySelectorAll(this.addedSpecificSimpleHide.join(','));
-            for ( const node of nodes ) {
-                this.hideNode(node);
-            }
-            this.addedSpecificSimpleHide = [];
-            this.specificSimpleHideAggregated = undefined;
-            //console.timeEnd('specific simple filterset changed');
-        }
-
-        if ( this.addedSpecificComplexHide.length !== 0 ) {
-            //console.time('specific complex filterset changed');
-            //console.log('added %d specific complex selectors', this.addedSpecificComplexHide.length);
-            const nodes = document.querySelectorAll(this.addedSpecificComplexHide.join(','));
-            for ( const node of nodes ) {
-                this.hideNode(node);
-            }
-            this.addedSpecificComplexHide = [];
-            this.specificComplexHideAggregated = undefined;
-            //console.timeEnd('specific complex filterset changed');
-        }
-
-        // DOM layout changed.
-
-        const domNodesAdded = this.addedNodes.size !== 0;
-        const domLayoutChanged = domNodesAdded || this.removedNodes;
-
-        if ( domNodesAdded === false || domLayoutChanged === false ) {
-            return;
-        }
-
-        //console.log('%d nodes added', this.addedNodes.size);
-
-        if ( this.specificSimpleHide.size !== 0 && domNodesAdded ) {
-            //console.time('dom layout changed/specific simple selectors');
-            if ( this.specificSimpleHideAggregated === undefined ) {
-                this.specificSimpleHideAggregated =
-                    Array.from(this.specificSimpleHide).join(',\n');
-            }
-            for ( const node of this.addedNodes ) {
-                if ( node.matches(this.specificSimpleHideAggregated) ) {
-                    this.hideNode(node);
-                }
-                const nodes = node.querySelectorAll(this.specificSimpleHideAggregated);
-                for ( const node of nodes ) {
-                    this.hideNode(node);
-                }
-            }
-            //console.timeEnd('dom layout changed/specific simple selectors');
-        }
-
-        if ( this.specificComplexHide.size !== 0 && domLayoutChanged ) {
-            //console.time('dom layout changed/specific complex selectors');
-            if ( this.specificComplexHideAggregated === undefined ) {
-                this.specificComplexHideAggregated =
-                    Array.from(this.specificComplexHide).join(',\n');
-            }
-            const nodes = document.querySelectorAll(this.specificComplexHideAggregated);
-            for ( const node of nodes ) {
-                this.hideNode(node);
-            }
-            //console.timeEnd('dom layout changed/specific complex selectors');
-        }
-
-        this.addedNodes.clear();
-        this.removedNodes = false;
-    }
-
-    commit(now) {
-        if ( now ) {
-            this.commitTimer.clear();
-            this.commitNow();
-        } else {
-            this.commitTimer.start();
-        }
-    }
-
-    addCSSRule(selectors, declarations, details = {}) {
-        if ( selectors === undefined ) { return; }
-
-        const selectorsStr = Array.isArray(selectors) ?
-            selectors.join(',\n') :
-            selectors;
-        if ( selectorsStr.length === 0 ) { return; }
-
-        vAPI.userStylesheet.add(selectorsStr + '\n{' + declarations + '}');
-        this.commit();
-        if ( details.silent !== true && this.hasListeners() ) {
-            this.triggerListeners({
-                declarative: [ [ selectorsStr, declarations ] ]
-            });
-        }
-
-        if ( declarations !== 'display:none!important;' ) {
-            this.specificOthers.push({
-                selectors: selectorsStr,
-                declarations: declarations
-            });
-            return;
-        }
-
-        const isGeneric= details.lazy === true;
-        const isSimple = details.type === 'simple';
-        const isComplex = details.type === 'complex';
-
-        if ( isGeneric ) {
-            if ( isSimple ) {
-                this.genericSimpleHide.add(selectorsStr);
-                return;
-            }
-            if ( isComplex ) {
-                this.genericComplexHide.add(selectorsStr);
-                return;
-            }
-        }
-
-        const selectorsArr = Array.isArray(selectors) ?
-            selectors :
-            selectors.split(',\n');
-
-        if ( isGeneric ) {
-            for ( const selector of selectorsArr ) {
-                if ( this.reCSSCombinators.test(selector) ) {
-                    this.genericComplexHide.add(selector);
-                } else {
-                    this.genericSimpleHide.add(selector);
-                }
-            }
-            return;
-        }
-
-        // Specific cosmetic filters.
-        for ( const selector of selectorsArr ) {
-            if (
-                isComplex ||
-                isSimple === false && this.reCSSCombinators.test(selector)
-            ) {
-                if ( this.specificComplexHide.has(selector) === false ) {
-                    this.specificComplexHide.add(selector);
-                    this.addedSpecificComplexHide.push(selector);
-                }
-            } else if ( this.specificSimpleHide.has(selector) === false ) {
-                this.specificSimpleHide.add(selector);
-                this.addedSpecificSimpleHide.push(selector);
-            }
-        }
-    }
-
-    exceptCSSRules(exceptions) {
-        if ( exceptions.length === 0 ) { return; }
-        this.exceptedCSSRules.push(...exceptions);
-        if ( this.hasListeners() ) {
-            this.triggerListeners({ exceptions });
-        }
-    }
-
-    onDOMCreated() {
-        this.domIsReady = true;
-        this.addedNodes.clear();
-        this.removedNodes = false;
-        this.commit();
-    }
-
-    onDOMChanged(addedNodes, removedNodes) {
-        for ( const node of addedNodes ) {
-            this.addedNodes.add(node);
-        }
-        this.removedNodes = this.removedNodes || removedNodes;
-        this.commit();
-    }
-
-    addListener(listener) {
-        if ( this.listeners.indexOf(listener) !== -1 ) { return; }
-        this.listeners.push(listener);
-    }
-
-    removeListener(listener) {
-        const pos = this.listeners.indexOf(listener);
-        if ( pos === -1 ) { return; }
-        this.listeners.splice(pos, 1);
-    }
-
-    hasListeners() {
-        return this.listeners.length !== 0;
-    }
-
-    triggerListeners(changes) {
-        for ( const listener of this.listeners ) {
-            listener.onFiltersetChanged(changes);
-        }
-    }
-
-    // https://jsperf.com/clientheight-and-clientwidth-vs-getcomputedstyle
-    //   Avoid getComputedStyle(), detecting whether a node is visible can be
-    //   achieved with clientWidth/clientHeight.
-    // https://gist.github.com/paulirish/5d52fb081b3570c81e3a
-    //   Do not interleave read-from/write-to the DOM. Write-to DOM
-    //   operations would cause the first read-from to be expensive, and
-    //   interleaving means that potentially all single read-from operation
-    //   would be expensive rather than just the 1st one.
-    //   Benchmarking toggling off/on cosmetic filtering confirms quite an
-    //   improvement when:
-    //   - batching as much as possible handling of all nodes;
-    //   - avoiding to interleave read-from/write-to operations.
-    //   However, toggling off/on cosmetic filtering repeatedly is not
-    //   a real use case, but this shows this will help performance
-    //   on sites which try to use inline styles to bypass blockers.
-    hideNodeBatchProcess() {
-        this.hideNodeBatchProcessTimer.clear();
-        const expando = this.hideNodeExpando;
-        for ( const node of this.hiddenNodesetToProcess ) {
-            if (
-                this.hiddenNodeset.has(node) === false ||
-                node[expando] === undefined ||
-                node.clientHeight === 0 || node.clientWidth === 0
-            ) {
-                continue;
-            }
-            let attr = node.getAttribute('style');
-            if ( attr === null ) {
-                attr = '';
-            } else if (
-                attr.length !== 0 &&
-                attr.charCodeAt(attr.length - 1) !== 0x3B /* ';' */
-            ) {
-                attr += ';';
-            }
-            node.setAttribute('style', attr + 'display:none!important;');
-        }
-        this.hiddenNodesetToProcess.clear();
-    }
-
-    hideNodeObserverHandler(mutations) {
-        if ( vAPI.userStylesheet.disabled ) { return; }
-        const stagedNodes = this.hiddenNodesetToProcess;
-        for ( const mutation of mutations ) {
-            stagedNodes.add(mutation.target);
-        }
-        this.hideNodeBatchProcessTimer.start();
-    }
-
-    hideNodeInit() {
-        this.hideNodeExpando = vAPI.randomToken();
-        this.hideNodeBatchProcessTimer =
-            new vAPI.SafeAnimationFrame(this.hideNodeBatchProcess.bind(this));
-        this.hiddenNodeObserver =
-            new MutationObserver(this.hideNodeObserverHandler.bind(this));
-        if ( this.hideNodeStyleSheetInjected === false ) {
-            this.hideNodeStyleSheetInjected = true;
-            vAPI.userStylesheet.add(
-                `[${this.hideNodeAttr}]\n{display:none!important;}`
-            );
-        }
-    }
-
-    excludeNode(node) {
-        this.excludedNodeSet.add(node);
-        this.unhideNode(node);
-    }
-
-    unexcludeNode(node) {
-        this.excludedNodeSet.delete(node);
-    }
-
-    hideNode(node) {
-        if ( this.excludedNodeSet.has(node) ) { return; }
-        if ( this.hideNodeAttr === undefined ) { return; }
-        if ( this.hiddenNodeset.has(node) ) { return; }
-        node.hidden = true;
-        this.hiddenNodeset.add(node);
-        if ( this.hideNodeExpando === undefined ) { this.hideNodeInit(); }
-        node.setAttribute(this.hideNodeAttr, '');
-        if ( node[this.hideNodeExpando] === undefined ) {
-            node[this.hideNodeExpando] =
-                node.hasAttribute('style') &&
-               (node.getAttribute('style') || '');
-        }
-        this.hiddenNodesetToProcess.add(node);
-        this.hideNodeBatchProcessTimer.start();
-        this.hiddenNodeObserver.observe(node, this.hiddenNodeObserverOptions);
-    }
-
-    unhideNode(node) {
-        if ( this.hiddenNodeset.has(node) === false ) { return; }
-        node.hidden = false;
-        node.removeAttribute(this.hideNodeAttr);
-        this.hiddenNodesetToProcess.delete(node);
-        if ( this.hideNodeExpando === undefined ) { return; }
-        const attr = node[this.hideNodeExpando];
-        if ( attr === false ) {
-            node.removeAttribute('style');
-        } else if ( typeof attr === 'string' ) {
-            node.setAttribute('style', attr);
-        }
-        node[this.hideNodeExpando] = undefined;
-        this.hiddenNodeset.delete(node);
-    }
-
-    showNode(node) {
-        node.hidden = false;
-        const attr = node[this.hideNodeExpando];
-        if ( attr === false ) {
-            node.removeAttribute('style');
-        } else if ( typeof attr === 'string' ) {
-            node.setAttribute('style', attr);
-        }
-    }
-
-    unshowNode(node) {
-        node.hidden = true;
-        this.hiddenNodesetToProcess.add(node);
-    }
-
-    toggle(state, callback) {
-        vAPI.userStylesheet.toggle(state);
-        const disabled = vAPI.userStylesheet.disabled;
-        const nodes = document.querySelectorAll(`[${this.hideNodeAttr}]`);
-        for ( const node of nodes ) {
-            if ( disabled ) {
-                this.showNode(node);
-            } else {
-                this.unshowNode(node);
-            }
-        }
-        if ( disabled === false && this.hideNodeExpando !== undefined ) {
-            this.hideNodeBatchProcessTimer.start();
-        }
-        if ( typeof callback === 'function' ) {
-            callback();
-        }
-    }
-
-    getAllSelectors_(all) {
-        const out = {
-            declarative: [],
-            exceptions: this.exceptedCSSRules,
-        };
-        if ( this.specificSimpleHide.size !== 0 ) {
-            out.declarative.push([
-                Array.from(this.specificSimpleHide).join(',\n'),
-                'display:none!important;'
-            ]);
-        }
-        if ( this.specificComplexHide.size !== 0 ) {
-            out.declarative.push([
-                Array.from(this.specificComplexHide).join(',\n'),
-                'display:none!important;'
-            ]);
-        }
-        if ( this.genericSimpleHide.size !== 0 ) {
-            out.declarative.push([
-                Array.from(this.genericSimpleHide).join(',\n'),
-                'display:none!important;'
-            ]);
-        }
-        if ( this.genericComplexHide.size !== 0 ) {
-            out.declarative.push([
-                Array.from(this.genericComplexHide).join(',\n'),
-                'display:none!important;'
-            ]);
-        }
-        if ( all ) {
-            out.declarative.push([
-                '[' + this.hideNodeAttr + ']',
-                'display:none!important;'
-            ]);
-        }
-        for ( const entry of this.specificOthers ) {
-            out.declarative.push([ entry.selectors, entry.declarations ]);
-        }
-        return out;
-    }
-
-    getFilteredElementCount() {
-        const details = this.getAllSelectors_(true);
-        if ( Array.isArray(details.declarative) === false ) { return 0; }
-        const selectors = details.declarative.map(entry => entry[0]);
-        if ( selectors.length === 0 ) { return 0; }
-        return document.querySelectorAll(selectors.join(',\n')).length;
-    }
-
-    getAllSelectors() {
-        return this.getAllSelectors_(false);
-    }
-};
-
-vAPI.DOMFilterer.prototype.hiddenNodeObserverOptions = {
-    attributes: true,
-    attributeFilter: [ 'style' ]
-};
-
-/******************************************************************************/
-/******************************************************************************/
-
-}
-// <<<<<<<< end of HUGE-IF-BLOCK
-
-
-
-
-
-
-
-
-/*******************************************************************************
-
-    DO NOT:
-    - Remove the following code
-    - Add code beyond the following code
-    Reason:
-    - https://github.com/gorhill/uBlock/pull/3721
-    - uBO never uses the return value from injected content scripts
-
-**/
-
-void 0;
-
-/*******************************************************************************
-
-    uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-present Raymond Hill
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see {http://www.gnu.org/licenses/}.
-
-    Home: https://github.com/gorhill/uBlock
-*/
-
-
 /*******************************************************************************
 
               +--> domCollapser
@@ -927,9 +29,11 @@ void 0;
   domWatcher--+
               |                  +-- domSurveyor
               |                  |
-              +--> domFilterer --+-- domLogger
-                                 |
-                                 +-- domInspector
+              +--> domFilterer --+-- [domLogger]
+                        |        |
+                        |        +-- [domInspector]
+                        |
+             [domProceduralFilterer]
 
   domWatcher:
     Watches for changes in the DOM, and notify the other components about these
@@ -941,6 +45,10 @@ void 0;
 
   domFilterer:
     Enforces the filtering of DOM elements, by feeding it cosmetic filters.
+
+  domProceduralFilterer:
+    Enforce the filtering of DOM elements through procedural cosmetic filters.
+    Loaded on demand, only when needed.
 
   domSurveyor:
     Surveys the DOM to find new cosmetic filters to apply to the current page.
@@ -986,16 +94,8 @@ void 0;
 
   The domFilterer makes use of platform-dependent user stylesheets[1].
 
-  At time of writing, only modern Firefox provides a custom implementation,
-  which makes for solid, reliable and low overhead cosmetic filtering on
-  Firefox.
-
-  The generic implementation[2] performs as best as can be, but won't ever be
-  as reliable and accurate as real user stylesheets.
-
   [1] "user stylesheets" refer to local CSS rules which have priority over,
        and can't be overriden by a web page's own CSS rules.
-  [2] below, see platformUserCSS / platformHideNode / platformUnhideNode
 
 */
 
@@ -1011,6 +111,58 @@ if ( typeof vAPI === 'object' && !vAPI.contentScript ) {
 /******************************************************************************/
 
 vAPI.contentScript = true;
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
+// https://github.com/uBlockOrigin/uBlock-issues/issues/688#issuecomment-663657508
+{
+    let context = self;
+    try {
+        while (
+            context !== self.top &&
+            context.location.href.startsWith('about:blank') &&
+            context.parent.location.href
+        ) {
+            context = context.parent;
+        }
+    } catch(ex) {
+    }
+    vAPI.effectiveSelf = context;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
+vAPI.userStylesheet = {
+    added: new Set(),
+    removed: new Set(),
+    apply: function(callback) {
+        if ( this.added.size === 0 && this.removed.size === 0 ) { return; }
+        vAPI.messaging.send('vapi', {
+            what: 'userCSS',
+            add: Array.from(this.added),
+            remove: Array.from(this.removed),
+        }).then(( ) => {
+            if ( callback instanceof Function === false ) { return; }
+            callback();
+        });
+        this.added.clear();
+        this.removed.clear();
+    },
+    add: function(cssText, now) {
+        if ( cssText === '' ) { return; }
+        this.added.add(cssText);
+        if ( now ) { this.apply(); }
+    },
+    remove: function(cssText, now) {
+        if ( cssText === '' ) { return; }
+        this.removed.add(cssText);
+        if ( now ) { this.apply(); }
+    }
+};
 
 /******************************************************************************/
 /******************************************************************************/
@@ -1039,13 +191,12 @@ vAPI.contentScript = true;
 
 // https://github.com/gorhill/uBlock/issues/2147
 
-vAPI.SafeAnimationFrame = function(callback) {
-    this.fid = this.tid = undefined;
-    this.callback = callback;
-};
-
-vAPI.SafeAnimationFrame.prototype = {
-    start: function(delay) {
+vAPI.SafeAnimationFrame = class {
+    constructor(callback) {
+        this.fid = this.tid = undefined;
+        this.callback = callback;
+    }
+    start(delay) {
         if ( self.vAPI instanceof Object === false ) { return; }
         if ( delay === undefined ) {
             if ( this.fid === undefined ) {
@@ -1059,8 +210,8 @@ vAPI.SafeAnimationFrame.prototype = {
         if ( this.fid === undefined && this.tid === undefined ) {
             this.tid = vAPI.setTimeout(( ) => { this.macroToMicro(); }, delay);
         }
-    },
-    clear: function() {
+    }
+    clear() {
         if ( this.fid !== undefined ) {
             cancelAnimationFrame(this.fid);
             this.fid = undefined;
@@ -1069,27 +220,27 @@ vAPI.SafeAnimationFrame.prototype = {
             clearTimeout(this.tid);
             this.tid = undefined;
         }
-    },
-    macroToMicro: function() {
+    }
+    macroToMicro() {
         this.tid = undefined;
         this.start();
-    },
-    onRAF: function() {
+    }
+    onRAF() {
         if ( this.tid !== undefined ) {
             clearTimeout(this.tid);
             this.tid = undefined;
         }
         this.fid = undefined;
         this.callback();
-    },
-    onSTO: function() {
+    }
+    onSTO() {
         if ( this.fid !== undefined ) {
             cancelAnimationFrame(this.fid);
             this.fid = undefined;
         }
         this.tid = undefined;
         this.callback();
-    },
+    }
 };
 
 /******************************************************************************/
@@ -1165,7 +316,9 @@ vAPI.SafeAnimationFrame.prototype = {
 /******************************************************************************/
 /******************************************************************************/
 
-vAPI.domWatcher = (( ) => {
+// vAPI.domWatcher
+
+{
     vAPI.domMutationTime = Date.now();
 
     const addedNodeLists = [];
@@ -1174,11 +327,11 @@ vAPI.domWatcher = (( ) => {
     const ignoreTags = new Set([ 'br', 'head', 'link', 'meta', 'script', 'style' ]);
     const listeners = [];
 
-    let domIsReady = false,
-        domLayoutObserver,
-        listenerIterator = [], listenerIteratorDirty = false,
-        removedNodes = false,
-        safeObserverHandlerTimer;
+    let domLayoutObserver;
+    let listenerIterator = [];
+    let listenerIteratorDirty = false;
+    let removedNodes = false;
+    let safeObserverHandlerTimer;
 
     const safeObserverHandler = function() {
         let i = addedNodeLists.length;
@@ -1216,7 +369,7 @@ vAPI.domWatcher = (( ) => {
     };
 
     // https://github.com/chrisaljoudi/uBlock/issues/205
-    // Do not handle added node directly from within mutation observer.
+    //   Do not handle added node directly from within mutation observer.
     const observerHandler = function(mutations) {
         let i = mutations.length;
         while ( i-- ) {
@@ -1230,7 +383,7 @@ vAPI.domWatcher = (( ) => {
                 removedNodeLists.push(nodeList);
             }
         }
-        if ( addedNodeLists.length !== 0 || removedNodes ) {
+        if ( addedNodeLists.length !== 0 || removedNodeLists.length !== 0 ) {
             safeObserverHandlerTimer.start(
                 addedNodeLists.length < 100 ? 1 : undefined
             );
@@ -1238,7 +391,7 @@ vAPI.domWatcher = (( ) => {
     };
 
     const startMutationObserver = function() {
-        if ( domLayoutObserver !== undefined || !domIsReady ) { return; }
+        if ( domLayoutObserver !== undefined ) { return; }
         domLayoutObserver = new MutationObserver(observerHandler);
         domLayoutObserver.observe(document.documentElement, {
             //attributeFilter: [ 'class', 'id' ],
@@ -1268,7 +421,7 @@ vAPI.domWatcher = (( ) => {
         if ( listeners.indexOf(listener) !== -1 ) { return; }
         listeners.push(listener);
         listenerIteratorDirty = true;
-        if ( domIsReady !== true ) { return; }
+        if ( domLayoutObserver === undefined ) { return; }
         try { listener.onDOMCreated(); }
         catch (ex) { }
         startMutationObserver();
@@ -1287,7 +440,7 @@ vAPI.domWatcher = (( ) => {
     const cleanup = function() {
         if ( domLayoutObserver !== undefined ) {
             domLayoutObserver.disconnect();
-            domLayoutObserver = null;
+            domLayoutObserver = undefined;
         }
         if ( safeObserverHandlerTimer !== undefined ) {
             safeObserverHandlerTimer.clear();
@@ -1296,7 +449,6 @@ vAPI.domWatcher = (( ) => {
     };
 
     const start = function() {
-        domIsReady = true;
         for ( const listener of getListenerIterator() ) {
             try { listener.onDOMCreated(); }
             catch (ex) { }
@@ -1304,8 +456,8 @@ vAPI.domWatcher = (( ) => {
         startMutationObserver();
     };
 
-    return { start, addListener, removeListener };
-})();
+    vAPI.domWatcher = { start, addListener, removeListener };
+}
 
 /******************************************************************************/
 /******************************************************************************/
@@ -1334,488 +486,230 @@ vAPI.injectScriptlet = function(doc, text) {
 
   The DOM filterer is the heart of uBO's cosmetic filtering.
 
-  DOMBaseFilterer: platform-specific
-  |
-  |
-  +---- DOMFilterer: adds procedural cosmetic filtering
+  DOMFilterer: adds procedural cosmetic filtering
 
 */
 
-vAPI.DOMFilterer = (function() {
+vAPI.hideStyle = 'display:none!important;';
 
-    // 'P' stands for 'Procedural'
+vAPI.DOMFilterer = class {
+    constructor() {
+        this.commitTimer = new vAPI.SafeAnimationFrame(
+            ( ) => { this.commitNow(); }
+        );
+        this.domIsReady = document.readyState !== 'loading';
+        this.disabled = false;
+        this.listeners = [];
+        this.stylesheets = [];
+        this.exceptedCSSRules = [];
+        this.exceptions = [];
+        this.proceduralFilterer = null;
+        // https://github.com/uBlockOrigin/uBlock-issues/issues/167
+        //   By the time the DOMContentLoaded is fired, the content script might
+        //   have been disconnected from the background page. Unclear why this
+        //   would happen, so far seems to be a Chromium-specific behavior at
+        //   launch time.
+        if ( this.domIsReady !== true ) {
+            document.addEventListener('DOMContentLoaded', ( ) => {
+                if ( vAPI instanceof Object === false ) { return; }
+                this.domIsReady = true;
+                this.commit();
+            });
+        }
+    }
 
-    const PSelectorHasTextTask = class {
-        constructor(task) {
-            let arg0 = task[1], arg1;
-            if ( Array.isArray(task[1]) ) {
-                arg1 = arg0[1]; arg0 = arg0[0];
-            }
-            this.needle = new RegExp(arg0, arg1);
+    explodeCSS(css) {
+        const out = [];
+        const reBlock = /^\{(.*)\}$/m;
+        const blocks = css.trim().split(/\n\n+/);
+        for ( const block of blocks ) {
+            const match = reBlock.exec(block);
+            out.push([ block.slice(0, match.index).trim(), match[1] ]);
         }
-        transpose(node, output) {
-            if ( this.needle.test(node.textContent) ) {
-                output.push(node);
-            }
-        }
-    };
+        return out;
+    }
 
-    const PSelectorIfTask = class {
-        constructor(task) {
-            this.pselector = new PSelector(task[1]);
+    addCSS(css, details = {}) {
+        if ( typeof css !== 'string' || css.length === 0 ) { return; }
+        if ( this.stylesheets.includes(css) ) { return; }
+        this.stylesheets.push(css);
+        if ( details.mustInject && this.disabled === false ) {
+            vAPI.userStylesheet.add(css);
         }
-        transpose(node, output) {
-            if ( this.pselector.test(node) === this.target ) {
-                output.push(node);
-            }
-        }
-    };
-    PSelectorIfTask.prototype.target = true;
+        if ( this.hasListeners() === false ) { return; }
+        if ( details.silent ) { return; }
+        this.triggerListeners({ declarative: this.explodeCSS(css) });
+    }
 
-    const PSelectorIfNotTask = class extends PSelectorIfTask {
-    };
-    PSelectorIfNotTask.prototype.target = false;
+    exceptCSSRules(exceptions) {
+        if ( exceptions.length === 0 ) { return; }
+        this.exceptedCSSRules.push(...exceptions);
+        if ( this.hasListeners() ) {
+            this.triggerListeners({ exceptions });
+        }
+    }
 
-    const PSelectorMatchesCSSTask = class {
-        constructor(task) {
-            this.name = task[1].name;
-            let arg0 = task[1].value, arg1;
-            if ( Array.isArray(arg0) ) {
-                arg1 = arg0[1]; arg0 = arg0[0];
-            }
-            this.value = new RegExp(arg0, arg1);
-        }
-        transpose(node, output) {
-            const style = window.getComputedStyle(node, this.pseudo);
-            if ( style !== null && this.value.test(style[this.name]) ) {
-                output.push(node);
-            }
-        }
-    };
-    PSelectorMatchesCSSTask.prototype.pseudo = null;
+    addListener(listener) {
+        if ( this.listeners.indexOf(listener) !== -1 ) { return; }
+        this.listeners.push(listener);
+    }
 
-    const PSelectorMatchesCSSAfterTask = class extends PSelectorMatchesCSSTask {
-    };
-    PSelectorMatchesCSSAfterTask.prototype.pseudo = ':after';
+    removeListener(listener) {
+        const pos = this.listeners.indexOf(listener);
+        if ( pos === -1 ) { return; }
+        this.listeners.splice(pos, 1);
+    }
 
-    const PSelectorMatchesCSSBeforeTask = class extends PSelectorMatchesCSSTask {
-    };
-    PSelectorMatchesCSSBeforeTask.prototype.pseudo = ':before';
+    hasListeners() {
+        return this.listeners.length !== 0;
+    }
 
-    const PSelectorMinTextLengthTask = class {
-        constructor(task) {
-            this.min = task[1];
+    triggerListeners(changes) {
+        for ( const listener of this.listeners ) {
+            listener.onFiltersetChanged(changes);
         }
-        transpose(node, output) {
-            if ( node.textContent.length >= this.min ) {
-                output.push(node);
-            }
-        }
-    };
+    }
 
-    const PSelectorPassthru = class {
-        constructor() {
-        }
-        transpose(node, output) {
-            output.push(node);
-        }
-    };
-
-    const PSelectorSpathTask = class {
-        constructor(task) {
-            this.spath = task[1];
-        }
-        transpose(node, output) {
-            const parent = node.parentElement;
-            if ( parent === null ) { return; }
-            let pos = 1;
-            for (;;) {
-                node = node.previousElementSibling;
-                if ( node === null ) { break; }
-                pos += 1;
-            }
-            const nodes = parent.querySelectorAll(
-                `:scope > :nth-child(${pos})${this.spath}`
-            );
-            for ( const node of nodes ) {
-                output.push(node);
-            }
-        }
-    };
-
-    const PSelectorUpwardTask = class {
-        constructor(task) {
-            const arg = task[1];
-            if ( typeof arg === 'number' ) {
-                this.i = arg;
+    toggle(state, callback) {
+        if ( state === undefined ) { state = this.disabled; }
+        if ( state !== this.disabled ) { return; }
+        this.disabled = !state;
+        const uss = vAPI.userStylesheet;
+        for ( const css of this.stylesheets ) {
+            if ( this.disabled ) {
+                uss.remove(css);
             } else {
-                this.s = arg;
+                uss.add(css);
             }
         }
-        transpose(node, output) {
-            if ( this.s !== '' ) {
-                const parent = node.parentElement;
-                if ( parent === null ) { return; }
-                node = parent.closest(this.s);
-                if ( node === null ) { return; }
-            } else {
-                let nth = this.i;
-                for (;;) {
-                    node = node.parentElement;
-                    if ( node === null ) { return; }
-                    nth -= 1;
-                    if ( nth === 0 ) { break; }
-                }
-            }
-            output.push(node);
-        }
-    };
-    PSelectorUpwardTask.prototype.i = 0;
-    PSelectorUpwardTask.prototype.s = '';
+        uss.apply(callback);
+    }
 
-    const PSelectorWatchAttrs = class {
-        constructor(task) {
-            this.observer = null;
-            this.observed = new WeakSet();
-            this.observerOptions = {
-                attributes: true,
-                subtree: true,
-            };
-            const attrs = task[1];
-            if ( Array.isArray(attrs) && attrs.length !== 0 ) {
-                this.observerOptions.attributeFilter = task[1];
-            }
-        }
-        // TODO: Is it worth trying to re-apply only the current selector?
-        handler() {
-            const filterer =
-                vAPI.domFilterer && vAPI.domFilterer.proceduralFilterer;
-            if ( filterer instanceof Object ) {
-                filterer.onDOMChanged([ null ]);
-            }
-        }
-        transpose(node, output) {
-            output.push(node);
-            if ( this.observed.has(node) ) { return; }
-            if ( this.observer === null ) {
-                this.observer = new MutationObserver(this.handler);
-            }
-            this.observer.observe(node, this.observerOptions);
-            this.observed.add(node);
-        }
-    };
-
-    const PSelectorXpathTask = class {
-        constructor(task) {
-            this.xpe = document.createExpression(task[1], null);
-            this.xpr = null;
-        }
-        transpose(node, output) {
-            this.xpr = this.xpe.evaluate(
-                node,
-                XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-                this.xpr
-            );
-            let j = this.xpr.snapshotLength;
-            while ( j-- ) {
-                const node = this.xpr.snapshotItem(j);
-                if ( node.nodeType === 1 ) {
-                    output.push(node);
-                }
-            }
-        }
-    };
-
-    const PSelector = class {
-        constructor(o) {
-            if ( PSelector.prototype.operatorToTaskMap === undefined ) {
-                PSelector.prototype.operatorToTaskMap = new Map([
-                    [ ':has', PSelectorIfTask ],
-                    [ ':has-text', PSelectorHasTextTask ],
-                    [ ':if', PSelectorIfTask ],
-                    [ ':if-not', PSelectorIfNotTask ],
-                    [ ':matches-css', PSelectorMatchesCSSTask ],
-                    [ ':matches-css-after', PSelectorMatchesCSSAfterTask ],
-                    [ ':matches-css-before', PSelectorMatchesCSSBeforeTask ],
-                    [ ':min-text-length', PSelectorMinTextLengthTask ],
-                    [ ':not', PSelectorIfNotTask ],
-                    [ ':nth-ancestor', PSelectorUpwardTask ],
-                    [ ':remove', PSelectorPassthru ],
-                    [ ':spath', PSelectorSpathTask ],
-                    [ ':upward', PSelectorUpwardTask ],
-                    [ ':watch-attr', PSelectorWatchAttrs ],
-                    [ ':xpath', PSelectorXpathTask ],
-                ]);
-            }
-            this.budget = 200; // I arbitrary picked a 1/5 second
-            this.raw = o.raw;
-            this.cost = 0;
-            this.lastAllowanceTime = 0;
-            this.selector = o.selector;
-            this.tasks = [];
-            const tasks = o.tasks;
-            if ( Array.isArray(tasks) ) {
-                for ( const task of tasks ) {
-                    this.tasks.push(
-                        new (this.operatorToTaskMap.get(task[0]))(task)
-                    );
-                }
-            }
-            if ( o.action !== undefined ) {
-                this.action = o.action;
-            }
-        }
-        prime(input) {
-            const root = input || document;
-            if ( this.selector === '' ) { return [ root ]; }
-            return Array.from(root.querySelectorAll(this.selector));
-        }
-        exec(input) {
-            let nodes = this.prime(input);
-            for ( const task of this.tasks ) {
-                if ( nodes.length === 0 ) { break; }
-                const transposed = [];
-                for ( const node of nodes ) {
-                    task.transpose(node, transposed);
-                }
-                nodes = transposed;
-            }
-            return nodes;
-        }
-        test(input) {
-            const nodes = this.prime(input);
-            for ( const node of nodes ) {
-                let output = [ node ];
-                for ( const task of this.tasks ) {
-                    const transposed = [];
-                    for ( const node of output ) {
-                        task.transpose(node, transposed);
-                    }
-                    output = transposed;
-                    if ( output.length === 0 ) { break; }
-                }
-                if ( output.length !== 0 ) { return true; }
-            }
-            return false;
-        }
-    };
-    PSelector.prototype.action = undefined;
-    PSelector.prototype.hit = false;
-    PSelector.prototype.operatorToTaskMap = undefined;
-
-    const DOMProceduralFilterer = class {
-        constructor(domFilterer) {
-            this.domFilterer = domFilterer;
-            this.domIsReady = false;
-            this.domIsWatched = false;
-            this.mustApplySelectors = false;
-            this.selectors = new Map();
-            this.hiddenNodes = new Set();
-        }
-
-        addProceduralSelectors(aa) {
-            const addedSelectors = [];
-            let mustCommit = this.domIsWatched;
-            for ( let i = 0, n = aa.length; i < n; i++ ) {
-                const raw = aa[i];
-                const o = JSON.parse(raw);
-                if ( o.action === 'style' ) {
-                    this.domFilterer.addCSSRule(o.selector, o.tasks[0][1]);
-                    mustCommit = true;
-                    continue;
-                }
-                if ( o.pseudo !== undefined ) {
-                    this.domFilterer.addCSSRule(
-                        o.selector,
-                        'display:none!important;'
-                    );
-                    mustCommit = true;
-                    continue;
-                }
-                if ( o.tasks !== undefined ) {
-                    if ( this.selectors.has(raw) === false ) {
-                        const pselector = new PSelector(o);
-                        this.selectors.set(raw, pselector);
-                        addedSelectors.push(pselector);
-                        mustCommit = true;
-                    }
-                    continue;
-                }
-            }
-            if ( mustCommit === false ) { return; }
-            this.mustApplySelectors = this.selectors.size !== 0;
-            this.domFilterer.commit();
-            if ( this.domFilterer.hasListeners() ) {
-                this.domFilterer.triggerListeners({
-                    procedural: addedSelectors
-                });
-            }
-        }
-
-        commitNow() {
-            if ( this.selectors.size === 0 || this.domIsReady === false ) {
-                return;
-            }
-
-            this.mustApplySelectors = false;
-
-            //console.time('procedural selectors/dom layout changed');
-
-            // https://github.com/uBlockOrigin/uBlock-issues/issues/341
-            //   Be ready to unhide nodes which no longer matches any of
-            //   the procedural selectors.
-            const toRemove = this.hiddenNodes;
-            this.hiddenNodes = new Set();
-
-            let t0 = Date.now();
-
-            for ( const pselector of this.selectors.values() ) {
-                const allowance = Math.floor((t0 - pselector.lastAllowanceTime) / 2000);
-                if ( allowance >= 1 ) {
-                    pselector.budget += allowance * 50;
-                    if ( pselector.budget > 200 ) { pselector.budget = 200; }
-                    pselector.lastAllowanceTime = t0;
-                }
-                if ( pselector.budget <= 0 ) { continue; }
-                const nodes = pselector.exec();
-                const t1 = Date.now();
-                pselector.budget += t0 - t1;
-                if ( pselector.budget < -500 ) {
-                    console.info('uBO: disabling %s', pselector.raw);
-                    pselector.budget = -0x7FFFFFFF;
-                }
-                t0 = t1;
-                if ( nodes.length === 0 ) { continue; }
-                pselector.hit = true;
-                if ( pselector.action === 'remove' ) {
-                    this.removeNodes(nodes);
-                } else {
-                    this.hideNodes(nodes);
-                }
-            }
-
-            for ( const node of toRemove ) {
-                if ( this.hiddenNodes.has(node) ) { continue; }
-                this.domFilterer.unhideNode(node);
-            }
-            //console.timeEnd('procedural selectors/dom layout changed');
-        }
-
-        hideNodes(nodes) {
-            for ( const node of nodes ) {
-                if ( node.parentElement === null ) { continue; }
-                this.domFilterer.hideNode(node);
-                this.hiddenNodes.add(node);
-            }
-        }
-
-        removeNodes(nodes) {
-            for ( const node of nodes ) {
-                node.textContent = '';
-                node.remove();
-            }
-        }
-
-        createProceduralFilter(o) {
-            return new PSelector(o);
-        }
-
-        onDOMCreated() {
-            this.domIsReady = true;
-            this.domFilterer.commitNow();
-        }
-
-        onDOMChanged(addedNodes, removedNodes) {
-            if ( this.selectors.size === 0 ) { return; }
-            this.mustApplySelectors =
-                this.mustApplySelectors ||
-                addedNodes.length !== 0 ||
-                removedNodes;
-            this.domFilterer.commit();
-        }
-    };
-
-    const DOMFilterer = class extends vAPI.DOMFilterer {
-        constructor() {
-            super();
-            this.exceptions = [];
-            this.proceduralFilterer = new DOMProceduralFilterer(this);
-            this.hideNodeAttr = undefined;
-            this.hideNodeStyleSheetInjected = false;
-            if ( vAPI.domWatcher instanceof Object ) {
-                vAPI.domWatcher.addListener(this);
-            }
-        }
-
-        commitNow() {
-            super.commitNow();
+    // Here we will deal with:
+    // - Injecting low priority user styles;
+    // - Notifying listeners about changed filterset.
+    // https://www.reddit.com/r/uBlockOrigin/comments/9jj0y1/no_longer_blocking_ads/
+    //   Ensure vAPI is still valid -- it can go away by the time we are
+    //   called, since the port could be force-disconnected from the main
+    //   process. Another approach would be to have vAPI.SafeAnimationFrame
+    //   register a shutdown job: to evaluate. For now I will keep the fix
+    //   trivial.
+    commitNow() {
+        this.commitTimer.clear();
+        if ( vAPI instanceof Object === false ) { return; }
+        vAPI.userStylesheet.apply();
+        if ( this.proceduralFilterer instanceof Object ) {
             this.proceduralFilterer.commitNow();
         }
+    }
 
-        addProceduralSelectors(aa) {
-            this.proceduralFilterer.addProceduralSelectors(aa);
+    commit(commitNow) {
+        if ( commitNow ) {
+            this.commitTimer.clear();
+            this.commitNow();
+        } else {
+            this.commitTimer.start();
         }
+    }
 
-        createProceduralFilter(o) {
-            return this.proceduralFilterer.createProceduralFilter(o);
-        }
-
-        getAllSelectors() {
-            const out = super.getAllSelectors();
-            out.procedural = Array.from(this.proceduralFilterer.selectors.values());
-            return out;
-        }
-
-        getAllExceptionSelectors() {
-            return this.exceptions.join(',\n');
-        }
-
-        onDOMCreated() {
-            if ( super.onDOMCreated instanceof Function ) {
-                super.onDOMCreated();
+    proceduralFiltererInstance() {
+        if ( this.proceduralFilterer instanceof Object === false ) {
+            if ( vAPI.DOMProceduralFilterer instanceof Object === false ) {
+                return null;
             }
-            this.proceduralFilterer.onDOMCreated();
+            this.proceduralFilterer = new vAPI.DOMProceduralFilterer(this);
         }
+        return this.proceduralFilterer;
+    }
 
-        onDOMChanged() {
-            if ( super.onDOMChanged instanceof Function ) {
-                super.onDOMChanged.apply(this, arguments);
+    addProceduralSelectors(selectors) {
+        if ( Array.isArray(selectors) === false || selectors.length === 0 ) {
+            return;
+        }
+        const procedurals = [];
+        for ( const raw of selectors ) {
+            procedurals.push(JSON.parse(raw));
+        }
+        if ( procedurals.length === 0 ) { return; }
+        const pfilterer = this.proceduralFiltererInstance();
+        if ( pfilterer !== null ) {
+            pfilterer.addProceduralSelectors(procedurals);
+        }
+    }
+
+    createProceduralFilter(o) {
+        const pfilterer = this.proceduralFiltererInstance();
+        if ( pfilterer === null ) { return; }
+        return pfilterer.createProceduralFilter(o);
+    }
+
+    getAllSelectors(bits = 0) {
+        const out = {
+            declarative: [],
+            exceptions: this.exceptedCSSRules,
+        };
+        const hasProcedural = this.proceduralFilterer instanceof Object;
+        const includePrivateSelectors = (bits & 0b01) !== 0;
+        const masterToken = hasProcedural
+            ? `[${this.proceduralFilterer.masterToken}]`
+            : undefined;
+        for ( const css of this.stylesheets ) {
+            const blocks = this.explodeCSS(css);
+            for ( const block of blocks ) {
+                if (
+                    includePrivateSelectors === false &&
+                    masterToken !== undefined &&
+                    block[0].startsWith(masterToken)
+                ) {
+                    continue;
+                }
+                out.declarative.push([ block[0], block[1] ]);
             }
-            this.proceduralFilterer.onDOMChanged.apply(
-                this.proceduralFilterer,
-                arguments
-            );
         }
-    };
+        const excludeProcedurals = (bits & 0b10) !== 0;
+        if ( excludeProcedurals !== true ) {
+            out.procedural = hasProcedural
+                ? Array.from(this.proceduralFilterer.selectors.values())
+                : [];
+        }
+        return out;
+    }
 
-    return DOMFilterer;
-})();
-
-vAPI.domFilterer = new vAPI.DOMFilterer();
+    getAllExceptionSelectors() {
+        return this.exceptions.join(',\n');
+    }
+};
 
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
 
-vAPI.domCollapser = (function() {
+// vAPI.domCollapser
+
+{
     const messaging = vAPI.messaging;
     const toCollapse = new Map();
     const src1stProps = {
+        audio: 'currentSrc',
         embed: 'src',
         iframe: 'src',
-        img: 'src',
-        object: 'data'
+        img: 'currentSrc',
+        object: 'data',
+        video: 'currentSrc',
     };
     const src2ndProps = {
-        img: 'srcset'
+        audio: 'src',
+        img: 'src',
+        video: 'src',
     };
     const tagToTypeMap = {
+        audio: 'media',
         embed: 'object',
         iframe: 'sub_frame',
         img: 'image',
-        object: 'object'
+        object: 'object',
+        video: 'media',
     };
-
     let resquestIdGenerator = 1,
         processTimer,
         cachedBlockedSet,
@@ -1831,6 +725,21 @@ vAPI.domCollapser = (function() {
         cachedBlockedSetTimer = undefined;
     };
 
+    // https://github.com/chrisaljoudi/uBlock/issues/399
+    // https://github.com/gorhill/uBlock/issues/2848
+    //   Use a user stylesheet to collapse placeholders.
+    const getCollapseToken = ( ) => {
+        if ( collapseToken === undefined ) {
+            collapseToken = vAPI.randomToken();
+            vAPI.userStylesheet.add(
+                `[${collapseToken}]\n{display:none!important;}`,
+                true
+            );
+        }
+        return collapseToken;
+    };
+    let collapseToken;
+
     // https://github.com/chrisaljoudi/uBlock/issues/174
     //   Do not remove fragment from src URL
     const onProcessed = function(response) {
@@ -1842,6 +751,7 @@ vAPI.domCollapser = (function() {
 
         const targets = toCollapse.get(response.id);
         if ( targets === undefined ) { return; }
+
         toCollapse.delete(response.id);
         if ( cachedBlockedSetHash !== response.hash ) {
             cachedBlockedSet = new Set(response.blockedResources);
@@ -1854,8 +764,8 @@ vAPI.domCollapser = (function() {
         if ( cachedBlockedSet === undefined || cachedBlockedSet.size === 0 ) {
             return;
         }
+
         const selectors = [];
-        const iframeLoadEventPatch = vAPI.iframeLoadEventPatch;
         let netSelectorCacheCountMax = response.netSelectorCacheCountMax;
 
         for ( const target of targets ) {
@@ -1872,32 +782,24 @@ vAPI.domCollapser = (function() {
             if ( cachedBlockedSet.has(tagToTypeMap[tag] + ' ' + src) === false ) {
                 continue;
             }
-            // https://github.com/chrisaljoudi/uBlock/issues/399
-            // Never remove elements from the DOM, just hide them
-            target.style.setProperty('display', 'none', 'important');
-            target.hidden = true;
+            target.setAttribute(getCollapseToken(), '');
             // https://github.com/chrisaljoudi/uBlock/issues/1048
-            // Use attribute to construct CSS rule
-            if ( netSelectorCacheCount <= netSelectorCacheCountMax ) {
-                const value = target.getAttribute(prop);
-                if ( value ) {
-                    selectors.push(`${tag}[${prop}="${CSS.escape(value)}"]`);
-                    netSelectorCacheCount += 1;
-                }
-            }
-            if ( iframeLoadEventPatch !== undefined ) {
-                iframeLoadEventPatch(target);
+            //   Use attribute to construct CSS rule
+            if ( netSelectorCacheCount > netSelectorCacheCountMax ) { continue; }
+            const value = target.getAttribute(prop);
+            if ( value ) {
+                selectors.push(`${tag}[${prop}="${CSS.escape(value)}"]`);
+                netSelectorCacheCount += 1;
             }
         }
 
-        if ( selectors.length !== 0 ) {
-            messaging.send('contentscript', {
-                what: 'cosmeticFiltersInjected',
-                type: 'net',
-                hostname: window.location.hostname,
-                selectors,
-            });
-        }
+        if ( selectors.length === 0 ) { return; }
+        messaging.send('contentscript', {
+            what: 'cosmeticFiltersInjected',
+            type: 'net',
+            hostname: window.location.hostname,
+            selectors,
+        });
     };
 
     const send = function() {
@@ -1951,27 +853,14 @@ vAPI.domCollapser = (function() {
         attributeFilter: [ 'src' ]
     };
 
-    // The injected scriptlets are those which were injected in the current
-    // document, from within `bootstrapPhase1`, and which scriptlets are
-    // selectively looked-up from:
-    // https://github.com/uBlockOrigin/uAssets/blob/master/filters/resources.txt
-    const primeLocalIFrame = function(iframe) {
-        if ( vAPI.injectedScripts ) {
-            vAPI.injectScriptlet(iframe.contentDocument, vAPI.injectedScripts);
-        }
-    };
-
     // https://github.com/gorhill/uBlock/issues/162
-    // Be prepared to deal with possible change of src attribute.
+    //   Be prepared to deal with possible change of src attribute.
     const addIFrame = function(iframe, dontObserve) {
         if ( dontObserve !== true ) {
             iframeSourceObserver.observe(iframe, iframeSourceObserverOptions);
         }
         const src = iframe.src;
-        if ( src === '' || typeof src !== 'string' ) {
-            primeLocalIFrame(iframe);
-            return;
-        }
+        if ( typeof src !== 'string' || src === '' ) { return; }
         if ( src.startsWith('http') === false ) { return; }
         toFilter.push({ type: 'sub_frame', url: iframe.src });
         add(iframe);
@@ -1987,6 +876,24 @@ vAPI.domCollapser = (function() {
         if ( tagToTypeMap[ev.target.localName] !== undefined ) {
             add(ev.target);
             process();
+        }
+    };
+
+    const stop = function() {
+        document.removeEventListener('error', onResourceFailed, true);
+        if ( processTimer !== undefined ) {
+            clearTimeout(processTimer);
+        }
+        if ( vAPI.domWatcher instanceof Object ) {
+            vAPI.domWatcher.removeListener(domWatcherInterface);
+        }
+        vAPI.shutdown.remove(stop);
+        vAPI.domCollapser = null;
+    };
+
+    const start = function() {
+        if ( vAPI.domWatcher instanceof Object ) {
+            vAPI.domWatcher.addListener(domWatcherInterface);
         }
     };
 
@@ -2020,12 +927,7 @@ vAPI.domCollapser = (function() {
 
             document.addEventListener('error', onResourceFailed, true);
 
-            vAPI.shutdown.add(function() {
-                document.removeEventListener('error', onResourceFailed, true);
-                if ( processTimer !== undefined ) {
-                    clearTimeout(processTimer);
-                }
-            });
+            vAPI.shutdown.add(stop);
         },
         onDOMChanged: function(addedNodes) {
             if ( addedNodes.length === 0 ) { return; }
@@ -2043,18 +945,16 @@ vAPI.domCollapser = (function() {
         }
     };
 
-    if ( vAPI.domWatcher instanceof Object ) {
-        vAPI.domWatcher.addListener(domWatcherInterface);
-    }
-
-    return { add, addMany, addIFrame, addIFrames, process };
-})();
+    vAPI.domCollapser = { start };
+}
 
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
 
-vAPI.domSurveyor = (function() {
+// vAPI.domSurveyor
+
+{
     const messaging = vAPI.messaging;
     const queriedIds = new Set();
     const queriedClasses = new Set();
@@ -2214,34 +1114,12 @@ vAPI.domSurveyor = (function() {
         let mustCommit = false;
 
         if ( result ) {
-            let selectors = result.simple;
-            if ( Array.isArray(selectors) && selectors.length !== 0 ) {
-                domFilterer.addCSSRule(
-                    selectors,
-                    'display:none!important;',
-                    { type: 'simple' }
-                );
+            const css = result.injectedCSS;
+            if ( typeof css === 'string' && css.length !== 0 ) {
+                domFilterer.addCSS(css);
                 mustCommit = true;
             }
-            selectors = result.complex;
-            if ( Array.isArray(selectors) && selectors.length !== 0 ) {
-                domFilterer.addCSSRule(
-                    selectors,
-                    'display:none!important;',
-                    { type: 'complex' }
-                );
-                mustCommit = true;
-            }
-            selectors = result.injected;
-            if ( typeof selectors === 'string' && selectors.length !== 0 ) {
-                domFilterer.addCSSRule(
-                    selectors,
-                    'display:none!important;',
-                    { injected: true }
-                );
-                mustCommit = true;
-            }
-            selectors = result.excepted;
+            const selectors = result.excepted;
             if ( Array.isArray(selectors) && selectors.length !== 0 ) {
                 domFilterer.exceptCSSRules(selectors);
             }
@@ -2313,18 +1191,18 @@ vAPI.domSurveyor = (function() {
         vAPI.domWatcher.addListener(domWatcherInterface);
     };
 
-    return { start };
-})();
+    vAPI.domSurveyor = { start };
+}
 
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
 
-// Bootstrapping allows all components of the content script to be launched
-// if/when needed.
+// vAPI.bootstrap:
+//   Bootstrapping allows all components of the content script
+//   to be launched if/when needed.
 
-vAPI.bootstrap = (function() {
-
+{
     const bootstrapPhase2 = function() {
         // This can happen on Firefox. For instance:
         // https://github.com/gorhill/uBlock/issues/1893
@@ -2395,44 +1273,20 @@ vAPI.bootstrap = (function() {
             return;
         }
 
+        vAPI.domCollapser.start();
+
         if ( response.noCosmeticFiltering ) {
             vAPI.domFilterer = null;
             vAPI.domSurveyor = null;
         } else {
-            const domFilterer = vAPI.domFilterer;
+            const domFilterer = vAPI.domFilterer = new vAPI.DOMFilterer();
             if ( response.noGenericCosmeticFiltering || cfeDetails.noDOMSurveying ) {
                 vAPI.domSurveyor = null;
             }
             domFilterer.exceptions = cfeDetails.exceptionFilters;
-            domFilterer.hideNodeAttr = cfeDetails.hideNodeAttr;
-            domFilterer.hideNodeStyleSheetInjected =
-                cfeDetails.hideNodeStyleSheetInjected === true;
-            domFilterer.addCSSRule(
-                cfeDetails.declarativeFilters,
-                'display:none!important;'
-            );
-            domFilterer.addCSSRule(
-                cfeDetails.highGenericHideSimple,
-                'display:none!important;',
-                { type: 'simple', lazy: true }
-            );
-            domFilterer.addCSSRule(
-                cfeDetails.highGenericHideComplex,
-                'display:none!important;',
-                { type: 'complex', lazy: true }
-            );
-            domFilterer.addCSSRule(
-                cfeDetails.injectedHideFilters,
-                'display:none!important;',
-                { injected: true }
-            );
+            domFilterer.addCSS(cfeDetails.injectedCSS);
             domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
             domFilterer.exceptCSSRules(cfeDetails.exceptedFilters);
-        }
-
-        if ( cfeDetails.networkFilters.length !== 0 ) {
-            vAPI.userStylesheet.add(
-                cfeDetails.networkFilters + '\n{display:none!important;}');
         }
 
         vAPI.userStylesheet.apply();
@@ -2466,17 +1320,15 @@ vAPI.bootstrap = (function() {
         }
     };
 
-    return function() {
+    vAPI.bootstrap = function() {
         vAPI.messaging.send('contentscript', {
             what: 'retrieveContentScriptParameters',
-            url: window.location.href,
-            isRootFrame: window === window.top,
-            charset: document.characterSet,
+            url: vAPI.effectiveSelf.location.href,
         }).then(response => {
             bootstrapPhase1(response);
         });
     };
-})();
+}
 
 // This starts bootstrap process.
 vAPI.bootstrap();

@@ -147,6 +147,9 @@ const roundToPageSize = v => (v + PAGE_SIZE-1) & ~(PAGE_SIZE-1);
         this.extraHandler = extraHandler;
         this.textDecoder = null;
         this.wasmMemory = null;
+
+        this.lastStored = '';
+        this.lastStoredLen = this.lastStoredIndex = 0;
     }
 
     //--------------------------------------------------------------------------
@@ -174,6 +177,9 @@ const roundToPageSize = v => (v + PAGE_SIZE-1) & ~(PAGE_SIZE-1);
         }
         this.buf32[TRIE1_SLOT] = this.buf32[TRIE0_SLOT];
         this.buf32[CHAR1_SLOT] = this.buf32[CHAR0_SLOT];
+
+        this.lastStored = '';
+        this.lastStoredLen = this.lastStoredIndex = 0;
     }
 
     matches(icell, ai) {
@@ -602,6 +608,11 @@ const roundToPageSize = v => (v + PAGE_SIZE-1) & ~(PAGE_SIZE-1);
 
     storeString(s) {
         const n = s.length;
+        if ( n === this.lastStoredLen && s === this.lastStored ) {
+            return this.lastStoredIndex;
+        }
+        this.lastStored = s;
+        this.lastStoredLen = n;
         if ( (this.buf8.length - this.buf32[CHAR1_SLOT]) < n ) {
             this.growBuf(0, n);
         }
@@ -611,7 +622,7 @@ const roundToPageSize = v => (v + PAGE_SIZE-1) & ~(PAGE_SIZE-1);
         for ( let i = 0; i < n; i++ ) {
             buf8[offset+i] = s.charCodeAt(i);
         }
-        return offset - this.buf32[CHAR0_SLOT];
+        return (this.lastStoredIndex = offset - this.buf32[CHAR0_SLOT]);
     }
 
     extractString(i, n) {
@@ -658,7 +669,7 @@ const roundToPageSize = v => (v + PAGE_SIZE-1) & ~(PAGE_SIZE-1);
                 i += 1;
             }
             haystackLeft += 1;
-            if ( haystackLeft === haystackEnd ) { break; }
+            if ( haystackLeft > haystackEnd ) { break; }
         }
         return -1;
     }
@@ -690,22 +701,19 @@ const roundToPageSize = v => (v + PAGE_SIZE-1) & ~(PAGE_SIZE-1);
         if ( typeof WebAssembly !== 'object' ) { return false; }
         if ( this.wasmMemory instanceof WebAssembly.Memory ) { return true; }
         const module = await getWasmModule();
-        if ( module instanceof WebAssembly.Module === false ) {
-            return false;
-        }
+        if ( module instanceof WebAssembly.Module === false ) { return false; }
         const memory = new WebAssembly.Memory({
-            initial: this.buf8.length >>> 16
+            initial: roundToPageSize(this.buf8.length) >>> 16
         });
-        const instance = await WebAssembly.instantiate(
-            module,
-            { imports: { memory, extraHandler: this.extraHandler } }
-        );
+        const instance = await WebAssembly.instantiate(module, {
+            imports: { memory, extraHandler: this.extraHandler }
+        });
         if ( instance instanceof WebAssembly.Instance === false ) {
             return false;
         }
         this.wasmMemory = memory;
         const curPageCount = memory.buffer.byteLength >>> 16;
-        const newPageCount = this.buf8.byteLength + PAGE_SIZE-1 >>> 16;
+        const newPageCount = roundToPageSize(this.buf8.byteLength) >>> 16;
         if ( newPageCount > curPageCount ) {
             memory.grow(newPageCount - curPageCount);
         }

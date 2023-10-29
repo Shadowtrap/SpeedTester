@@ -19,7 +19,7 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global CodeMirror, uDom */
+/* global uDom */
 
 'use strict';
 
@@ -149,66 +149,40 @@ self.uBlockDashboard.patchCodeMirrorEditor = (function() {
     let lastGutterClick = 0;
     let lastGutterLine = 0;
 
-    const onGutterClicked = function(cm, line) {
+    const onGutterClicked = function(cm, line, gutter) {
+        if ( gutter !== 'CodeMirror-linenumbers' ) { return; }
+        grabFocusAsync(cm);
         const delta = Date.now() - lastGutterClick;
+        // Single click
         if ( delta >= 500 || line !== lastGutterLine ) {
             cm.setSelection(
-                { line: line, ch: 0 },
+                { line, ch: 0 },
                 { line: line + 1, ch: 0 }
             );
             lastGutterClick = Date.now();
             lastGutterLine = line;
-        } else {
-            cm.setSelection(
-                { line: 0, ch: 0 },
-                { line: cm.lineCount(), ch: 0 },
-                { scroll: false }
-            );
-            lastGutterClick = 0;
+            return;
         }
-        grabFocusAsync(cm);
-    };
-
-    let resizeTimer,
-        resizeObserver;
-    const resize = function(cm) {
-        resizeTimer = undefined;
-        const child = document.querySelector('.codeMirrorFillVertical');
-        if ( child === null ) { return; }
-        const prect = document.documentElement.getBoundingClientRect();
-        const crect = child.getBoundingClientRect();
-        const cssHeight = Math.floor(Math.max(prect.bottom - crect.top, 80)) + 'px';
-        if ( child.style.height === cssHeight ) { return; }
-        child.style.height = cssHeight;
-        // https://github.com/gorhill/uBlock/issues/3694
-        //   Need to call cm.refresh() when resizing occurs. However the
-        //   cursor position may end up outside the viewport, hence we also
-        //   call cm.scrollIntoView() to address this.
-        //   Reference: https://codemirror.net/doc/manual.html#api_sizing
-        if ( cm instanceof CodeMirror ) {
-            cm.refresh();
-            cm.scrollIntoView(null);
+        // Double click: select fold-able block or all
+        let lineFrom = 0;
+        let lineTo = cm.lineCount();
+        const foldFn = cm.getHelper({ line, ch: 0 }, 'fold');
+        if ( foldFn instanceof Function ) {
+            const range = foldFn(cm, { line, ch: 0 });
+            if ( range !== undefined ) {
+                lineFrom = range.from.line;
+                lineTo = range.to.line + 1;
+            }
         }
-    };
-    const resizeAsync = function(cm, delay) {
-        if ( resizeTimer !== undefined ) { return; }
-        resizeTimer = vAPI.setTimeout(
-            resize.bind(null, cm),
-            typeof delay === 'number' ? delay : 66
+        cm.setSelection(
+            { line: lineFrom, ch: 0 },
+            { line: lineTo, ch: 0 },
+            { scroll: false }
         );
+        lastGutterClick = 0;
     };
 
     return function(cm) {
-        if ( document.querySelector('.codeMirrorFillVertical') !== null ) {
-            const boundResizeAsync = resizeAsync.bind(null, cm);
-            window.addEventListener('resize', boundResizeAsync);
-            resizeObserver = new MutationObserver(boundResizeAsync);
-            resizeObserver.observe(document.querySelector('.body'), {
-                childList: true,
-                subtree: true
-            });
-            resizeAsync(cm, 1);
-        }
         if ( cm.options.inputStyle === 'contenteditable' ) {
             cm.on('beforeSelectionChange', patchSelectAll);
         }
@@ -239,10 +213,3 @@ self.uBlockDashboard.openOrSelectPage = function(url, options = {}) {
 // Open links in the proper window
 uDom('a').attr('target', '_blank');
 uDom('a[href*="dashboard.html"]').attr('target', '_parent');
-uDom('.whatisthis').on('click', function() {
-    uDom(this)
-        .parent()
-        .descendants('.whatisthis-expandable')
-        .first()
-        .toggleClass('whatisthis-expanded');
-});
